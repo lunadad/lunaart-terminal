@@ -7,8 +7,8 @@ import { getMonthlyVolume, getCategoryPerformance } from '@/lib/mock-data';
 import { useTheme } from './ThemeProvider';
 
 const COLORS = {
-  christies: '#ff4757',
-  sothebys: '#4f8ffa',
+  christies: '#f97316',
+  sothebys: '#22c55e',
 };
 
 function CustomTooltip({ active, payload, label }: any) {
