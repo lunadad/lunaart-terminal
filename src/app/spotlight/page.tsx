@@ -170,14 +170,23 @@ export default function SpotlightPage() {
               </thead>
               <tbody>
                 {hotLots.map((lot, i) => (
-                  <tr key={lot.id} className="border-b border-border/40 hover:bg-surface-hover transition-colors">
+                  <tr
+                    key={lot.id}
+                    className="border-b border-border/40 hover:bg-surface-hover transition-colors cursor-pointer"
+                    onClick={() => window.open(lot.lotUrl, '_blank', 'noopener,noreferrer')}
+                  >
                     <td className="p-3 text-muted font-mono">{i + 1}</td>
                     <td className="p-3 font-medium text-foreground">{lot.artist.name}</td>
                     <td className="p-3 text-text-secondary italic max-w-[200px] truncate">{lot.title}, {lot.year}</td>
                     <td className="p-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
-                        lot.auctionHouse.name === "Christie's" ? 'bg-red/10 text-red' : 'bg-accent/10 text-accent'
-                      }`}>{lot.auctionHouse.name}</span>
+                      <span
+                        className="px-2 py-0.5 rounded text-[10px] font-medium"
+                        style={lot.auctionHouse.name === "Christie's"
+                          ? { background: 'rgba(249,115,22,0.12)', color: '#f97316' }
+                          : { background: 'rgba(139,155,0,0.14)', color: '#8b9b00' }}
+                      >
+                        {lot.auctionHouse.name === "Christie's" ? 'CHR' : 'SOT'}
+                      </span>
                     </td>
                     <td className="p-3 text-right text-text-secondary font-mono">
                       {formatFullCurrency(lot.estimateHigh, lot.currency)}
