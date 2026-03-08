@@ -34,6 +34,12 @@ function mapRawLot(raw: any): LotWithDetails {
   const saleEvent = saleEvents.find(s => s.id === raw.saleEventId)!;
   const auctionHouse = auctionHouses.find(h => h.id === raw.auctionHouseId)!;
 
+  // Sotheby's individual lot pages are taken down after auction ends;
+  // fall back to the parent auction page URL stored on the saleEvent.
+  const lotUrl = raw.auctionHouseId === 'sothebys' && saleEvent?.url
+    ? saleEvent.url
+    : raw.lotUrl;
+
   const lot: Lot = {
     id: raw.id,
     saleEventId: raw.saleEventId,
@@ -47,7 +53,7 @@ function mapRawLot(raw: any): LotWithDetails {
     estimateLow: raw.estimateLow,
     estimateHigh: raw.estimateHigh,
     currency: raw.currency,
-    lotUrl: raw.lotUrl,
+    lotUrl,
   };
 
   const result: AuctionResult = {

@@ -11,6 +11,7 @@ export interface SaleEvent {
   city: string;
   date: string;
   category: string;
+  url?: string;
 }
 
 export interface ArtistProfile {
