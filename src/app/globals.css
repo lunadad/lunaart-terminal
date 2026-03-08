@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+@theme {
+  /* Tailwind v4: @theme (not inline) generates var() references in utilities */
+  --color-background: var(--th-background);
+  --color-foreground: var(--th-foreground);
+  --color-surface: var(--th-surface);
+  --color-surface-hover: var(--th-surface-hover);
+  --color-border: var(--th-border);
+  --color-border-light: var(--th-border-light);
+  --color-accent: var(--th-accent);
+  --color-accent-dim: var(--th-accent-dim);
+  --color-green: var(--th-green);
+  --color-red: var(--th-red);
+  --color-orange: var(--th-orange);
+  --color-yellow: var(--th-yellow);
+  --color-purple: var(--th-purple);
+  --color-muted: var(--th-muted);
+  --color-text-secondary: var(--th-text-secondary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Dark theme (default) ── */
+:root,
+[data-theme="dark"] {
+  --th-background: #0a0b0e;
+  --th-foreground: #e8e9ed;
+  --th-surface: #12141a;
+  --th-surface-hover: #1a1d25;
+  --th-border: #1e2130;
+  --th-border-light: #2a2d3a;
+  --th-accent: #4f8ffa;
+  --th-accent-dim: #3a6bc5;
+  --th-green: #00d26a;
+  --th-red: #ff4757;
+  --th-orange: #ffa502;
+  --th-yellow: #ffd43b;
+  --th-purple: #a855f7;
+  --th-muted: #6b7280;
+  --th-text-secondary: #9ca3af;
+  --scrollbar-color: #2a2d3a;
+}
+
+/* ── Light theme (Claude-inspired warm tone) ── */
+[data-theme="light"] {
+  --th-background: #f5f1eb;
+  --th-foreground: #1a1a1a;
+  --th-surface: #ffffff;
+  --th-surface-hover: #f0ece5;
+  --th-border: #e0dbd2;
+  --th-border-light: #d4cec4;
+  --th-accent: #c96442;
+  --th-accent-dim: #a8503a;
+  --th-green: #1a8d5f;
+  --th-red: #c93b3b;
+  --th-orange: #c27a1a;
+  --th-yellow: #a68b1a;
+  --th-purple: #7c3aed;
+  --th-muted: #8c8379;
+  --th-text-secondary: #6b6259;
+  --scrollbar-color: #d4cec4;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-color) transparent;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--th-background);
+  color: var(--th-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hide scrollbar but allow scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, var(--th-border) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
