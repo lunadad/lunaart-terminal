@@ -123,7 +123,7 @@ export default function SpotlightPage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-sm md:text-base font-bold text-foreground">{ra.artist.name}</h3>
                     <span className="px-1.5 md:px-2 py-0.5 rounded-full bg-green/10 text-green text-[10px] md:text-xs font-mono font-bold">
-                      +{ra.momentum}%
+                      +{ra.momentum.toFixed(1)}%
                     </span>
                     <span className="text-[10px] md:text-xs text-muted hidden sm:inline">{ra.artist.nationality} &middot; b.{ra.artist.birthYear}</span>
                   </div>
