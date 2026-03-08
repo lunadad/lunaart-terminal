@@ -17,8 +17,8 @@ export interface ArtistProfile {
   id: string;
   name: string;
   nationality: string;
-  birthYear: number;
-  deathYear?: number;
+  birthYear: number | null;
+  deathYear?: number | null;
   category: string; // Contemporary, Modern, Impressionist, etc.
   imageUrl?: string;
 }
@@ -31,7 +31,7 @@ export interface Lot {
   lotNumber: number;
   title: string;
   medium: string; // Painting, Sculpture, Photography, NFT, etc.
-  year: number;
+  year: number | null;
   dimensions?: string;
   estimateLow: number;
   estimateHigh: number;

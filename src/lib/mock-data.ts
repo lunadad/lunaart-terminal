@@ -1,4 +1,5 @@
-import rawData from './christies-data.json';
+import rawChristiesData from './christies-data.json';
+import rawSothebysData from './sothebys-data.json';
 import {
   AuctionHouse,
   SaleEvent,
@@ -15,13 +16,20 @@ export const auctionHouses: AuctionHouse[] = [
   { id: 'sothebys', name: "Sotheby's" },
 ];
 
-// ── 실제 Christie's 데이터 ──────────────────────────────────────
-export const artists: ArtistProfile[] = (rawData.artists as ArtistProfile[]);
+// ── 아티스트 & 세일 이벤트 (양사 합산) ─────────────────────────────
+export const artists: ArtistProfile[] = [
+  ...(rawChristiesData.artists as ArtistProfile[]),
+  ...(rawSothebysData.artists as ArtistProfile[]),
+];
 
-export const saleEvents: SaleEvent[] = (rawData.saleEvents as SaleEvent[]);
+export const saleEvents: SaleEvent[] = [
+  ...(rawChristiesData.saleEvents as SaleEvent[]),
+  ...(rawSothebysData.saleEvents as SaleEvent[]),
+];
 
-// LotWithDetails 배열 구성
-export const allLots: LotWithDetails[] = rawData.lots.map((raw) => {
+// ── LotWithDetails 변환 헬퍼 ─────────────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapRawLot(raw: any): LotWithDetails {
   const artist = artists.find(a => a.id === raw.artistId)!;
   const saleEvent = saleEvents.find(s => s.id === raw.saleEventId)!;
   const auctionHouse = auctionHouses.find(h => h.id === raw.auctionHouseId)!;
@@ -34,7 +42,7 @@ export const allLots: LotWithDetails[] = rawData.lots.map((raw) => {
     lotNumber: raw.lotNumber,
     title: raw.title,
     medium: raw.medium,
-    year: raw.year,
+    year: raw.year ?? null,
     dimensions: raw.dimensions,
     estimateLow: raw.estimateLow,
     estimateHigh: raw.estimateHigh,
@@ -54,7 +62,13 @@ export const allLots: LotWithDetails[] = rawData.lots.map((raw) => {
   };
 
   return { ...lot, result, artist, saleEvent, auctionHouse };
-}).sort((a, b) => new Date(b.saleEvent.date).getTime() - new Date(a.saleEvent.date).getTime());
+}
+
+// ── 전체 lots (크리스티 + 소더비) ─────────────────────────────────
+export const allLots: LotWithDetails[] = [
+  ...rawChristiesData.lots.map(mapRawLot),
+  ...rawSothebysData.lots.map(mapRawLot),
+].sort((a, b) => new Date(b.saleEvent.date).getTime() - new Date(a.saleEvent.date).getTime());
 
 // ── 분석 함수 ────────────────────────────────────────────────────
 export function getMarketPulse(lots: LotWithDetails[]): MarketPulse {
@@ -79,7 +93,7 @@ export function getMarketPulse(lots: LotWithDetails[]): MarketPulse {
 }
 
 export function getRisingArtists(): RisingArtist[] {
-  // 실제 데이터 기반: 낙찰가/추정가 초과율 상위 작가
+  // 낙찰가/추정가 초과율 상위 작가 (양사 통합)
   const artistStats: Record<string, { lots: LotWithDetails[] }> = {};
   allLots.filter(l => l.result.sold).forEach(l => {
     if (!artistStats[l.artistId]) artistStats[l.artistId] = { lots: [] };
@@ -114,16 +128,22 @@ export function getRisingArtists(): RisingArtist[] {
 }
 
 export function getMonthlyVolume() {
-  // 실제 세일 데이터에서 월별 집계 (현재 데이터는 모두 March 2026)
   const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-  const marSold = allLots.filter(l => l.result.sold && l.result.saleDate?.startsWith('2026-03'));
-  const marTotal = marSold.reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
 
-  // 이전 달은 추정치 (업계 평균 기반)
-  return months.map((month, i) => ({
+  // 실제 3월 데이터 (양사)
+  const marSold = allLots.filter(l => l.result.sold && l.result.saleDate?.startsWith('2026-03'));
+  const christiesMar = marSold
+    .filter(l => l.auctionHouseId === 'christies')
+    .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
+  const sothebysMarVal = marSold
+    .filter(l => l.auctionHouseId === 'sothebys')
+    .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
+
+  // 이전 달은 업계 평균 기반 추정치
+  return months.map((month) => ({
     month,
-    christies: month === 'Mar' ? Math.round(marTotal * 0.6) : Math.round(60 + Math.random() * 80),
-    sothebys: month === 'Mar' ? Math.round(marTotal * 0.4) : Math.round(50 + Math.random() * 80),
+    christies: month === 'Mar' ? Math.round(christiesMar) : Math.round(60 + Math.random() * 80),
+    sothebys: month === 'Mar' ? Math.round(sothebysMarVal) : Math.round(50 + Math.random() * 80),
   }));
 }
 
