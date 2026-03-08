@@ -8,7 +8,7 @@ import { useTheme } from './ThemeProvider';
 
 const COLORS = {
   christies: '#f97316',
-  sothebys: '#22c55e',
+  sothebys: '#8b9b00',
 };
 
 function CustomTooltip({ active, payload, label }: any) {

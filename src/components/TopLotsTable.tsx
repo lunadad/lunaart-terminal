@@ -46,9 +46,12 @@ export default function TopLotsTable({ lots }: Props) {
                   <td className="py-2.5 px-2 text-foreground font-medium">{lot.artist.name}</td>
                   <td className="py-2.5 px-2 text-text-secondary italic max-w-[200px] truncate">{lot.title}</td>
                   <td className="py-2.5 px-2">
-                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                      lot.auctionHouse.name === "Christie's" ? 'bg-red/10 text-red' : 'bg-accent/10 text-accent'
-                    }`}>
+                    <span
+                      className="px-1.5 py-0.5 rounded text-[10px]"
+                      style={lot.auctionHouse.name === "Christie's"
+                        ? { background: 'rgba(249,115,22,0.12)', color: '#f97316' }
+                        : { background: 'rgba(139,155,0,0.14)', color: '#8b9b00' }}
+                    >
                       {lot.auctionHouse.name === "Christie's" ? 'CHR' : 'SOT'}
                     </span>
                   </td>
