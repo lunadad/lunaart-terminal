@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTheme } from './ThemeProvider';
+
+const VERSION = 'v0.1.0';
 
 const navItems = [
   {
@@ -72,6 +74,37 @@ export default function Sidebar() {
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Crawl controls state
+  const [scheduleTime, setScheduleTime] = useState(() =>
+    typeof window !== 'undefined' ? (localStorage.getItem('crawlSchedule') ?? '09:00') : '09:00'
+  );
+  const [editingSchedule, setEditingSchedule] = useState(false);
+  const [tempTime, setTempTime] = useState('09:00');
+  const [crawling, setCrawling] = useState(false);
+  const [lastCrawled, setLastCrawled] = useState<string | null>(() =>
+    typeof window !== 'undefined' ? localStorage.getItem('lastCrawled') : null
+  );
+  const timeInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editingSchedule) timeInputRef.current?.focus();
+  }, [editingSchedule]);
+
+  function openScheduleEdit() { setTempTime(scheduleTime); setEditingSchedule(true); }
+  function saveSchedule() {
+    setScheduleTime(tempTime);
+    localStorage.setItem('crawlSchedule', tempTime);
+    setEditingSchedule(false);
+  }
+  async function runCrawl() {
+    setCrawling(true);
+    await new Promise(r => setTimeout(r, 1800));
+    const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+    setLastCrawled(now);
+    localStorage.setItem('lastCrawled', now);
+    setCrawling(false);
+  }
+
   // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
@@ -127,6 +160,59 @@ export default function Sidebar() {
         })}
       </nav>
 
+      {/* Crawl Controls */}
+      <div className="px-4 pt-4 pb-2 border-t border-border space-y-2">
+        <div className="flex items-center justify-between gap-1.5">
+          {editingSchedule ? (
+            <div className="flex items-center gap-1 flex-1">
+              <input
+                ref={timeInputRef}
+                type="time"
+                value={tempTime}
+                onChange={e => setTempTime(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') saveSchedule(); if (e.key === 'Escape') setEditingSchedule(false); }}
+                className="flex-1 min-w-0 px-2 py-1 text-xs bg-background border border-accent rounded font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
+              />
+              <button onClick={saveSchedule} className="px-2 py-1 text-[10px] bg-accent text-background rounded font-medium hover:bg-accent/80 transition-colors shrink-0">저장</button>
+              <button onClick={() => setEditingSchedule(false)} className="px-1.5 py-1 text-[10px] text-muted hover:text-foreground transition-colors shrink-0">✕</button>
+            </div>
+          ) : (
+            <button
+              onClick={openScheduleEdit}
+              className="flex items-center gap-1.5 flex-1 min-w-0 px-2.5 py-1.5 text-[11px] bg-background border border-border rounded-lg text-text-secondary hover:border-border-light hover:text-foreground transition-all"
+            >
+              <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="truncate">매일 <span className="font-mono text-foreground">{scheduleTime}</span> KST</span>
+              <svg className="w-2.5 h-2.5 opacity-40 shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          )}
+          <button
+            onClick={runCrawl}
+            disabled={crawling}
+            className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] bg-accent/10 border border-accent/30 rounded-lg text-accent hover:bg-accent/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+          >
+            {crawling ? (
+              <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+              </svg>
+            ) : (
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            )}
+            {crawling ? '크롤링 중' : '지금'}
+          </button>
+        </div>
+        {lastCrawled && !crawling && (
+          <p className="text-[9px] text-muted/70 font-mono truncate">마지막: {lastCrawled}</p>
+        )}
+      </div>
+
       {/* Theme Toggle + Status */}
       <div className="p-4 border-t border-border space-y-3">
         <button
@@ -155,6 +241,7 @@ export default function Sidebar() {
           </div>
           <p className="text-[10px] text-muted mt-1.5 font-mono">Last updated: 2 min ago</p>
         </div>
+        <p className="text-[9px] font-mono text-muted/40 text-right select-none">{VERSION}</p>
       </div>
     </>
   );
