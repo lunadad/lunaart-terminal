@@ -57,77 +57,104 @@ export function MonthlyVolumeChart() {
   );
 }
 
-// Sophisticated color palette keyed on avgOverEstimate performance tier
-const TIER_COLORS = [
-  { min: 50,  bg: '#0A6B52', border: '#0D8A6A', accent: '#4DFFC9' }, // teal-emerald: 강세
-  { min: 20,  bg: '#1A4F72', border: '#1E6B9A', accent: '#7EC8E3' }, // steel-blue: 양호
-  { min: 0,   bg: '#3B3B72', border: '#5050A0', accent: '#A8A8F8' }, // indigo: 보통
-  { min: -99, bg: '#5C2E2E', border: '#7A3E3E', accent: '#F4A0A0' }, // muted-rose: 부진
+// Distinct light-pastel palette — one per category index
+const CAT_PALETTE = [
+  { bg: '#FFD6A5', border: '#F5A742', fg: '#6B3A00' }, // amber
+  { bg: '#A8D8ED', border: '#5BAFD6', fg: '#0D3D5C' }, // sky blue
+  { bg: '#B6EAD4', border: '#5CC49A', fg: '#0A4A2A' }, // mint
+  { bg: '#FFBDBD', border: '#F07070', fg: '#6B1515' }, // rose
+  { bg: '#CAD0F0', border: '#8892D8', fg: '#1E2870' }, // lavender
+  { bg: '#FFD9BD', border: '#F0A060', fg: '#6A3300' }, // peach
+  { bg: '#B6D8C6', border: '#68B890', fg: '#144030' }, // sage
+  { bg: '#F4CADF', border: '#D878AB', fg: '#5A1038' }, // pink
+  { bg: '#D6EAA8', border: '#9AC84A', fg: '#2A4A00' }, // lime
+  { bg: '#D0E8F8', border: '#70B8E8', fg: '#0A2A5A' }, // powder blue
 ] as const;
 
-function getTileStyle(overEst: number) {
-  return TIER_COLORS.find(t => overEst >= t.min) ?? TIER_COLORS[3];
-}
-
 function TreemapTile(props: any) {
-  const { x, y, width, height, name, sellThrough, avgOverEstimate, totalVolume } = props;
-  if (!width || !height || width < 2 || height < 2) return null;
+  const { x, y, width, height, name, sellThrough, avgOverEstimate, totalVolume, colorIdx } = props;
+  if (!width || !height || width < 3 || height < 3) return null;
 
-  const style = getTileStyle(avgOverEstimate ?? 0);
-  const pad = 6;
+  const pal = CAT_PALETTE[((colorIdx ?? 0) as number) % CAT_PALETTE.length] ?? CAT_PALETTE[0];
   const cx = x + width / 2;
-  const showDetail = width > 90 && height > 70;
-  const showMini = width > 50 && height > 44;
+  const cy = y + height / 2;
+
+  // Layout tiers by tile size
+  const showFull   = width > 110 && height > 90;
+  const showMedium = width > 65  && height > 54;
+  const showMin    = width > 32  && height > 28;
 
   return (
     <g>
       <rect
-        x={x + 1} y={y + 1}
-        width={width - 2} height={height - 2}
-        rx={5}
-        fill={style.bg}
-        stroke={style.border}
-        strokeWidth={1}
-        opacity={0.92}
+        x={x + 1.5} y={y + 1.5}
+        width={width - 3} height={height - 3}
+        rx={6}
+        fill={pal.bg}
+        stroke={pal.border}
+        strokeWidth={1.5}
       />
-      {showMini && (
+      {showMin && (
         <>
-          {/* Category name */}
+          {/* Sell-through — always the dominant number */}
           <text
-            x={cx} y={y + pad + (showDetail ? 13 : height / 2 - 8)}
+            x={cx}
+            y={showMedium ? cy + (showFull ? 6 : 4) : cy + 2}
             textAnchor="middle" dominantBaseline="middle"
-            fill={style.accent} fontSize={showDetail ? 10 : 9}
-            fontWeight="600" fontFamily="system-ui, sans-serif"
-            style={{ letterSpacing: '0.02em' }}
-          >
-            {name}
-          </text>
-          {/* Sell-through big number */}
-          <text
-            x={cx} y={y + (showDetail ? height / 2 + 4 : height / 2 + 10)}
-            textAnchor="middle" dominantBaseline="middle"
-            fill="#FFFFFF" fontSize={showDetail ? 20 : 14}
-            fontWeight="700" fontFamily="ui-monospace, monospace"
+            fill={pal.fg}
+            fontSize={showFull ? 28 : showMedium ? 20 : 13}
+            fontWeight="800"
+            fontFamily="ui-monospace, 'Courier New', monospace"
           >
             {sellThrough}%
           </text>
-          {showDetail && (
+
+          {showMedium && (
             <>
-              {/* Over-estimate */}
+              {/* Category name above */}
               <text
-                x={cx} y={y + height / 2 + 22}
+                x={cx} y={showFull ? cy - 24 : cy - 16}
                 textAnchor="middle" dominantBaseline="middle"
-                fill={style.accent} fontSize={9} opacity={0.85}
-                fontFamily="ui-monospace, monospace"
+                fill={pal.fg}
+                fontSize={showFull ? 13 : 11}
+                fontWeight="700"
+                fontFamily="system-ui, -apple-system, sans-serif"
+              >
+                {name}
+              </text>
+
+              {/* sell-through label */}
+              <text
+                x={cx} y={showFull ? cy + 26 : cy + 20}
+                textAnchor="middle" dominantBaseline="middle"
+                fill={pal.fg} fontSize={showFull ? 11 : 10}
+                fontWeight="500" fontFamily="system-ui, sans-serif"
+                opacity={0.7}
+              >
+                sell-through
+              </text>
+            </>
+          )}
+
+          {showFull && (
+            <>
+              {/* vs estimate */}
+              <text
+                x={cx} y={cy + 42}
+                textAnchor="middle" dominantBaseline="middle"
+                fill={pal.fg} fontSize={12}
+                fontWeight="600" fontFamily="ui-monospace, monospace"
+                opacity={0.85}
               >
                 {(avgOverEstimate ?? 0) >= 0 ? '+' : ''}{avgOverEstimate}% vs est.
               </text>
               {/* Volume */}
               <text
-                x={cx} y={y + height - pad - 8}
+                x={cx} y={y + height - 12}
                 textAnchor="middle" dominantBaseline="middle"
-                fill={style.accent} fontSize={9} opacity={0.65}
-                fontFamily="ui-monospace, monospace"
+                fill={pal.fg} fontSize={11}
+                fontWeight="500" fontFamily="ui-monospace, monospace"
+                opacity={0.6}
               >
                 ${formatCurrency(totalVolume ?? 0)}
               </text>
@@ -142,20 +169,14 @@ function TreemapTile(props: any) {
 export function CategoryHeatmap() {
   const raw = getCategoryPerformance();
 
-  const treemapData = raw.map(d => ({
+  const treemapData = raw.map((d, i) => ({
     name: d.category,
     size: Math.max(d.totalVolume, 1),
     sellThrough: d.sellThrough,
     avgOverEstimate: d.avgOverEstimate,
     totalVolume: d.totalVolume,
+    colorIdx: i,
   }));
-
-  const LEGEND = [
-    { style: TIER_COLORS[0], label: '+50%↑' },
-    { style: TIER_COLORS[1], label: '+20–50%' },
-    { style: TIER_COLORS[2], label: '0–20%' },
-    { style: TIER_COLORS[3], label: '0% 미만' },
-  ];
 
   return (
     <div className="bg-surface border border-border rounded-xl p-5">
@@ -163,7 +184,7 @@ export function CategoryHeatmap() {
         <h3 className="text-sm font-semibold text-foreground">카테고리별 성과 히트맵</h3>
         <span className="text-[10px] text-muted font-mono">타일 크기 = USD 매출액</span>
       </div>
-      <ResponsiveContainer width="100%" height={260}>
+      <ResponsiveContainer width="100%" height={280}>
         <Treemap
           data={treemapData}
           dataKey="size"
@@ -173,17 +194,20 @@ export function CategoryHeatmap() {
         />
       </ResponsiveContainer>
       {/* Legend */}
-      <div className="flex items-center gap-3 mt-3 flex-wrap">
-        {LEGEND.map(({ style, label }) => (
-          <div key={label} className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2 mt-3 flex-wrap">
+        {treemapData.map(d => (
+          <div key={d.name} className="flex items-center gap-1">
             <div
-              className="w-2.5 h-2.5 rounded-sm"
-              style={{ background: style.bg, border: `1px solid ${style.border}` }}
+              className="w-2.5 h-2.5 rounded-sm shrink-0"
+              style={{
+                background: CAT_PALETTE[d.colorIdx % CAT_PALETTE.length].bg,
+                border: `1px solid ${CAT_PALETTE[d.colorIdx % CAT_PALETTE.length].border}`,
+              }}
             />
-            <span className="text-[10px] text-muted">{label} est.</span>
+            <span className="text-[10px] text-muted whitespace-nowrap">{d.name}</span>
           </div>
         ))}
-        <span className="text-[10px] text-muted/50 ml-auto font-mono">sell-through %</span>
+        <span className="text-[10px] text-muted/50 ml-auto font-mono hidden sm:inline">sell-through %</span>
       </div>
     </div>
   );
