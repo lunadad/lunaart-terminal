@@ -177,8 +177,11 @@ export function getCategoryPerformance() {
         ? Math.round(v.overEst.reduce((a, b) => a + b, 0) / v.overEst.length)
         : 0,
       volume: v.total,
+      totalVolume: allLots
+        .filter(l => (l.artist.category || 'Contemporary') === category && l.result.sold)
+        .reduce((sum, l) => sum + (l.result.usdEquivalent || 0), 0),
     }))
-    .sort((a, b) => b.volume - a.volume);
+    .sort((a, b) => b.totalVolume - a.totalVolume);
 }
 
 export function formatCurrency(amount: number): string {
