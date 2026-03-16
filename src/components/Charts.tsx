@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, Treemap,
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
 import { getMonthlyVolume, getCategoryPerformance, formatCurrency } from '@/lib/mock-data';
 import { useTheme } from './ThemeProvider';
@@ -57,173 +58,130 @@ export function MonthlyVolumeChart() {
   );
 }
 
-// Distinct light-pastel palette — one per category index
+// Pastel palette — one per category
 const CAT_PALETTE = [
-  { bg: '#FFD6A5', border: '#F5A742', fg: '#6B3A00' }, // amber
-  { bg: '#A8D8ED', border: '#5BAFD6', fg: '#0D3D5C' }, // sky blue
-  { bg: '#B6EAD4', border: '#5CC49A', fg: '#0A4A2A' }, // mint
-  { bg: '#FFBDBD', border: '#F07070', fg: '#6B1515' }, // rose
-  { bg: '#CAD0F0', border: '#8892D8', fg: '#1E2870' }, // lavender
-  { bg: '#FFD9BD', border: '#F0A060', fg: '#6A3300' }, // peach
-  { bg: '#B6D8C6', border: '#68B890', fg: '#144030' }, // sage
-  { bg: '#F4CADF', border: '#D878AB', fg: '#5A1038' }, // pink
-  { bg: '#D6EAA8', border: '#9AC84A', fg: '#2A4A00' }, // lime
-  { bg: '#D0E8F8', border: '#70B8E8', fg: '#0A2A5A' }, // powder blue
+  { bg: '#FFF0DB', border: '#F5C36A', fg: '#6B4A00' }, // warm gold
+  { bg: '#DBF0F8', border: '#7EC8E3', fg: '#0D4A6B' }, // sky
+  { bg: '#D8F5E8', border: '#6CC4A0', fg: '#0A4A2A' }, // mint
+  { bg: '#FFE0E0', border: '#F09090', fg: '#6B2020' }, // rose
+  { bg: '#E0E4F8', border: '#9AA4D8', fg: '#2A3570' }, // lavender
+  { bg: '#FFF0E0', border: '#F0B878', fg: '#6A4000' }, // peach
+  { bg: '#D8EAD8', border: '#80C0A0', fg: '#1A4830' }, // sage
+  { bg: '#F8DAE8', border: '#D888B0', fg: '#5A1840' }, // pink
 ] as const;
 
-const SANS  = 'var(--font-geist-sans), -apple-system, system-ui, sans-serif';
-const MONO  = 'var(--font-geist-mono), ui-monospace, monospace';
-
-function TreemapTile(props: any) {
-  const { x, y, width, height, name, sellThrough, avgOverEstimate, totalVolume, colorIdx } = props;
-  if (!width || !height || width < 3 || height < 3) return null;
-
-  const pal = CAT_PALETTE[((colorIdx ?? 0) as number) % CAT_PALETTE.length] ?? CAT_PALETTE[0];
-  const cx  = x + width / 2;
-  const cy  = y + height / 2;
-
-  const showFull   = width > 120 && height > 100;
-  const showMedium = width > 60  && height > 48;
-  const showMin    = width > 30  && height > 24;
-
-  // vertical rhythm for full tile
-  const nameY    = cy - (showFull ? 30 : 16);
-  const pctY     = cy + (showFull ? 4 : 3);
-  const labelY   = cy + (showFull ? 30 : 22);
-  const estY     = cy + (showFull ? 48 : 0);
-  const volY     = y + height - 13;
+function TileContent({
+  d,
+  isLarge,
+  idx,
+}: {
+  d: ReturnType<typeof getCategoryPerformance>[0];
+  isLarge: boolean;
+  idx: number;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const pal = CAT_PALETTE[idx % CAT_PALETTE.length];
 
   return (
-    <g>
-      <rect
-        x={x + 1.5} y={y + 1.5}
-        width={width - 3} height={height - 3}
-        rx={7}
-        fill={pal.bg}
-        stroke={pal.border}
-        strokeWidth={1.5}
-      />
+    <div
+      className="relative h-full rounded-lg flex flex-col items-center justify-center transition-all duration-200 overflow-hidden select-none"
+      style={{ background: pal.bg, border: `1.5px solid ${pal.border}`, color: pal.fg }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Category name — always visible */}
+      <p className={`font-semibold truncate max-w-full px-2 ${isLarge ? 'text-sm' : 'text-[11px]'}`}>
+        {d.category}
+      </p>
 
-      {showMin && (
+      {/* Sell-through — large tiles show inline, small tiles on hover */}
+      {isLarge ? (
         <>
-          {/* Big sell-through number */}
-          <text
-            x={cx} y={pctY}
-            textAnchor="middle" dominantBaseline="middle"
-            fill={pal.fg}
-            fontSize={showFull ? 36 : showMedium ? 24 : 15}
-            fontWeight="800"
-            style={{ fontFamily: MONO, fontVariantNumeric: 'tabular-nums' }}
+          <p className={`font-bold font-mono mt-1 ${isLarge ? 'text-2xl' : 'text-lg'}`}>
+            {d.sellThrough}%
+          </p>
+          <p className="text-[10px] opacity-55 mt-0.5">낙찰률</p>
+          <div className="flex items-baseline gap-1.5 mt-2 opacity-70">
+            <span className="text-xs font-mono font-semibold">
+              {d.avgOverEstimate >= 0 ? '+' : ''}{d.avgOverEstimate}%
+            </span>
+            <span className="text-[10px]">est.</span>
+          </div>
+          <p className="text-[10px] font-mono opacity-45 mt-1.5">
+            ${formatCurrency(d.totalVolume)}
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="text-base font-bold font-mono mt-0.5">{d.sellThrough}%</p>
+
+          {/* Hover tooltip — slides up from bottom */}
+          <div
+            className={`absolute inset-0 rounded-lg flex flex-col items-center justify-center gap-0.5 backdrop-blur-sm transition-all duration-200 ${
+              hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+            }`}
+            style={{ background: `${pal.bg}ee` }}
           >
-            {sellThrough}%
-          </text>
-
-          {showMedium && (
-            <>
-              {/* Category name */}
-              <text
-                x={cx} y={nameY}
-                textAnchor="middle" dominantBaseline="middle"
-                fill={pal.fg}
-                fontSize={showFull ? 14 : 12}
-                fontWeight="700"
-                style={{ fontFamily: SANS, letterSpacing: '0.02em' }}
-              >
-                {name}
-              </text>
-
-              {/* sell-through sub-label */}
-              <text
-                x={cx} y={labelY}
-                textAnchor="middle" dominantBaseline="middle"
-                fill={pal.fg}
-                fontSize={showFull ? 12 : 10}
-                fontWeight="500"
-                style={{ fontFamily: SANS }}
-                opacity={0.6}
-              >
-                낙찰률
-              </text>
-            </>
-          )}
-
-          {showFull && (
-            <>
-              {/* vs estimate */}
-              <text
-                x={cx} y={estY}
-                textAnchor="middle" dominantBaseline="middle"
-                fill={pal.fg}
-                fontSize={13}
-                fontWeight="600"
-                style={{ fontFamily: MONO }}
-                opacity={0.8}
-              >
-                {(avgOverEstimate ?? 0) >= 0 ? '+' : ''}{avgOverEstimate}% est.
-              </text>
-
-              {/* Volume — pinned to bottom */}
-              <text
-                x={cx} y={volY}
-                textAnchor="middle" dominantBaseline="middle"
-                fill={pal.fg}
-                fontSize={12}
-                fontWeight="500"
-                style={{ fontFamily: MONO }}
-                opacity={0.55}
-              >
-                ${formatCurrency(totalVolume ?? 0)}
-              </text>
-            </>
-          )}
+            <p className="text-[11px] font-semibold">{d.category}</p>
+            <p className="text-lg font-bold font-mono">{d.sellThrough}%</p>
+            <p className="text-[10px] opacity-60">낙찰률</p>
+            <p className="text-[11px] font-mono font-semibold opacity-75 mt-0.5">
+              {d.avgOverEstimate >= 0 ? '+' : ''}{d.avgOverEstimate}% est.
+            </p>
+            <p className="text-[10px] font-mono opacity-50">
+              ${formatCurrency(d.totalVolume)}
+            </p>
+          </div>
         </>
       )}
-    </g>
+    </div>
   );
 }
 
 export function CategoryHeatmap() {
-  const raw = getCategoryPerformance();
+  const data = getCategoryPerformance();
+  if (data.length === 0) return null;
 
-  const treemapData = raw.map((d, i) => ({
-    name: d.category,
-    size: Math.max(d.totalVolume, 1),
-    sellThrough: d.sellThrough,
-    avgOverEstimate: d.avgOverEstimate,
-    totalVolume: d.totalVolume,
-    colorIdx: i,
-  }));
+  const [first, ...rest] = data;
 
   return (
     <div className="bg-surface border border-border rounded-xl p-5">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-foreground">카테고리별 성과 히트맵</h3>
-        <span className="text-[10px] text-muted font-mono">타일 크기 = USD 매출액</span>
+        <span className="text-[10px] text-muted font-mono">타일 크기 ∝ USD 매출액</span>
       </div>
-      <ResponsiveContainer width="100%" height={280}>
-        <Treemap
-          data={treemapData}
-          dataKey="size"
-          aspectRatio={16 / 9}
-          content={<TreemapTile />}
-          isAnimationActive={false}
-        />
-      </ResponsiveContainer>
+
+      {/* Treemap: largest on left, rest stacked on right */}
+      <div className="flex gap-1.5" style={{ height: 260 }}>
+        {/* Main (largest) tile */}
+        <div style={{ flex: first.totalVolume }}>
+          <TileContent d={first} isLarge={true} idx={0} />
+        </div>
+
+        {/* Right column: remaining tiles stacked */}
+        {rest.length > 0 && (
+          <div className="flex flex-col gap-1.5" style={{ flex: data.reduce((s, d) => s + d.totalVolume, 0) - first.totalVolume }}>
+            {rest.map((d, i) => (
+              <div key={d.category} style={{ flex: d.totalVolume }}>
+                <TileContent d={d} isLarge={rest.length === 1} idx={i + 1} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Legend */}
-      <div className="flex items-center gap-2 mt-3 flex-wrap">
-        {treemapData.map(d => (
-          <div key={d.name} className="flex items-center gap-1">
+      <div className="flex items-center gap-3 mt-3 flex-wrap">
+        {data.map((d, i) => (
+          <div key={d.category} className="flex items-center gap-1.5">
             <div
               className="w-2.5 h-2.5 rounded-sm shrink-0"
-              style={{
-                background: CAT_PALETTE[d.colorIdx % CAT_PALETTE.length].bg,
-                border: `1px solid ${CAT_PALETTE[d.colorIdx % CAT_PALETTE.length].border}`,
-              }}
+              style={{ background: CAT_PALETTE[i % CAT_PALETTE.length].bg, border: `1px solid ${CAT_PALETTE[i % CAT_PALETTE.length].border}` }}
             />
-            <span className="text-[10px] text-muted whitespace-nowrap">{d.name}</span>
+            <span className="text-[10px] text-muted">{d.category}</span>
+            <span className="text-[10px] font-mono text-muted/60">{d.sellThrough}%</span>
           </div>
         ))}
-        <span className="text-[10px] text-muted/50 ml-auto font-mono hidden sm:inline">sell-through %</span>
       </div>
     </div>
   );
