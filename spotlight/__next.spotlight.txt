@@ -1,4 +1,4 @@
 1:"$Sreact.fragment"
 2:I[39756,["/lunaart-terminal/_next/static/chunks/ff1a16fafef87110.js","/lunaart-terminal/_next/static/chunks/a2dfb6fc5208ab9b.js"],"default"]
 3:I[37457,["/lunaart-terminal/_next/static/chunks/ff1a16fafef87110.js","/lunaart-terminal/_next/static/chunks/a2dfb6fc5208ab9b.js"],"default"]
-0:{"buildId":"Z5Fj_x9FtyOJbSPWi-WRx","rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"loading":null,"isPartial":false}
+0:{"buildId":"3rn2hdA1xQjQC6l3-laPK","rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"loading":null,"isPartial":false}
