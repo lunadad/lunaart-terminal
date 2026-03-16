@@ -71,67 +71,78 @@ const CAT_PALETTE = [
   { bg: '#D0E8F8', border: '#70B8E8', fg: '#0A2A5A' }, // powder blue
 ] as const;
 
+const SANS  = 'var(--font-geist-sans), -apple-system, system-ui, sans-serif';
+const MONO  = 'var(--font-geist-mono), ui-monospace, monospace';
+
 function TreemapTile(props: any) {
   const { x, y, width, height, name, sellThrough, avgOverEstimate, totalVolume, colorIdx } = props;
   if (!width || !height || width < 3 || height < 3) return null;
 
   const pal = CAT_PALETTE[((colorIdx ?? 0) as number) % CAT_PALETTE.length] ?? CAT_PALETTE[0];
-  const cx = x + width / 2;
-  const cy = y + height / 2;
+  const cx  = x + width / 2;
+  const cy  = y + height / 2;
 
-  // Layout tiers by tile size
-  const showFull   = width > 110 && height > 90;
-  const showMedium = width > 65  && height > 54;
-  const showMin    = width > 32  && height > 28;
+  const showFull   = width > 120 && height > 100;
+  const showMedium = width > 60  && height > 48;
+  const showMin    = width > 30  && height > 24;
+
+  // vertical rhythm for full tile
+  const nameY    = cy - (showFull ? 30 : 16);
+  const pctY     = cy + (showFull ? 4 : 3);
+  const labelY   = cy + (showFull ? 30 : 22);
+  const estY     = cy + (showFull ? 48 : 0);
+  const volY     = y + height - 13;
 
   return (
     <g>
       <rect
         x={x + 1.5} y={y + 1.5}
         width={width - 3} height={height - 3}
-        rx={6}
+        rx={7}
         fill={pal.bg}
         stroke={pal.border}
         strokeWidth={1.5}
       />
+
       {showMin && (
         <>
-          {/* Sell-through — always the dominant number */}
+          {/* Big sell-through number */}
           <text
-            x={cx}
-            y={showMedium ? cy + (showFull ? 6 : 4) : cy + 2}
+            x={cx} y={pctY}
             textAnchor="middle" dominantBaseline="middle"
             fill={pal.fg}
-            fontSize={showFull ? 28 : showMedium ? 20 : 13}
+            fontSize={showFull ? 36 : showMedium ? 24 : 15}
             fontWeight="800"
-            fontFamily="ui-monospace, 'Courier New', monospace"
+            style={{ fontFamily: MONO, fontVariantNumeric: 'tabular-nums' }}
           >
             {sellThrough}%
           </text>
 
           {showMedium && (
             <>
-              {/* Category name above */}
+              {/* Category name */}
               <text
-                x={cx} y={showFull ? cy - 24 : cy - 16}
+                x={cx} y={nameY}
                 textAnchor="middle" dominantBaseline="middle"
                 fill={pal.fg}
-                fontSize={showFull ? 13 : 11}
+                fontSize={showFull ? 14 : 12}
                 fontWeight="700"
-                fontFamily="system-ui, -apple-system, sans-serif"
+                style={{ fontFamily: SANS, letterSpacing: '0.02em' }}
               >
                 {name}
               </text>
 
-              {/* sell-through label */}
+              {/* sell-through sub-label */}
               <text
-                x={cx} y={showFull ? cy + 26 : cy + 20}
+                x={cx} y={labelY}
                 textAnchor="middle" dominantBaseline="middle"
-                fill={pal.fg} fontSize={showFull ? 11 : 10}
-                fontWeight="500" fontFamily="system-ui, sans-serif"
-                opacity={0.7}
+                fill={pal.fg}
+                fontSize={showFull ? 12 : 10}
+                fontWeight="500"
+                style={{ fontFamily: SANS }}
+                opacity={0.6}
               >
-                sell-through
+                낙찰률
               </text>
             </>
           )}
@@ -140,21 +151,26 @@ function TreemapTile(props: any) {
             <>
               {/* vs estimate */}
               <text
-                x={cx} y={cy + 42}
+                x={cx} y={estY}
                 textAnchor="middle" dominantBaseline="middle"
-                fill={pal.fg} fontSize={12}
-                fontWeight="600" fontFamily="ui-monospace, monospace"
-                opacity={0.85}
+                fill={pal.fg}
+                fontSize={13}
+                fontWeight="600"
+                style={{ fontFamily: MONO }}
+                opacity={0.8}
               >
-                {(avgOverEstimate ?? 0) >= 0 ? '+' : ''}{avgOverEstimate}% vs est.
+                {(avgOverEstimate ?? 0) >= 0 ? '+' : ''}{avgOverEstimate}% est.
               </text>
-              {/* Volume */}
+
+              {/* Volume — pinned to bottom */}
               <text
-                x={cx} y={y + height - 12}
+                x={cx} y={volY}
                 textAnchor="middle" dominantBaseline="middle"
-                fill={pal.fg} fontSize={11}
-                fontWeight="500" fontFamily="ui-monospace, monospace"
-                opacity={0.6}
+                fill={pal.fg}
+                fontSize={12}
+                fontWeight="500"
+                style={{ fontFamily: MONO }}
+                opacity={0.55}
               >
                 ${formatCurrency(totalVolume ?? 0)}
               </text>
