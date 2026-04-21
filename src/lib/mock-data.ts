@@ -135,23 +135,29 @@ export function getRisingArtists(): RisingArtist[] {
 }
 
 export function getMonthlyVolume() {
-  const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-
   // 실제 3월 데이터 (양사)
   const marSold = allLots.filter(l => l.result.sold && l.result.saleDate?.startsWith('2026-03'));
-  const christiesMar = marSold
-    .filter(l => l.auctionHouseId === 'christies')
-    .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
-  const sothebysMarVal = marSold
-    .filter(l => l.auctionHouseId === 'sothebys')
-    .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
+  const christiesMar = Math.round(
+    marSold.filter(l => l.auctionHouseId === 'christies')
+      .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000
+  );
+  const sothebysMar = Math.round(
+    marSold.filter(l => l.auctionHouseId === 'sothebys')
+      .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000
+  );
 
-  // 이전 달은 업계 평균 기반 추정치
-  return months.map((month) => ({
-    month,
-    christies: month === 'Mar' ? Math.round(christiesMar) : Math.round(60 + Math.random() * 80),
-    sothebys: month === 'Mar' ? Math.round(sothebysMarVal) : Math.round(50 + Math.random() * 80),
-  }));
+  // 9월~2월: 2025 연간 실적 기반 Fine Art 카테고리 월별 추정
+  // Sources: Christie's $4.7B auction / Sotheby's $4.7B auction (2025 full-year)
+  // Nov = NY Marquee Week (최대), Jan = 비수기 (최소)
+  return [
+    { month: 'Sep', christies:  78, sothebys:  62 }, // London Contemporary
+    { month: 'Oct', christies: 115, sothebys:  95 }, // Hong Kong Week
+    { month: 'Nov', christies: 310, sothebys: 280 }, // NY Marquee Sales
+    { month: 'Dec', christies:  55, sothebys:  48 }, // Year-end
+    { month: 'Jan', christies:  32, sothebys:  28 }, // Off-season
+    { month: 'Feb', christies:  88, sothebys:  72 }, // London Spring Preview
+    { month: 'Mar', christies: christiesMar, sothebys: sothebysMar }, // 실제 데이터
+  ];
 }
 
 export function getCategoryPerformance() {

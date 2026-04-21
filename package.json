@@ -1,12 +1,13 @@
 {
-  "name": "art-terminal",
+  "name": "hermes-terminal",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync:hermes": "node scripts/generate-hermes-snapshot.mjs"
   },
   "dependencies": {
     "date-fns": "^4.1.0",

@@ -1,7 +1,6 @@
 'use client';
 
 import { LotWithDetails } from '@/lib/types';
-import { formatFullCurrency } from '@/lib/mock-data';
 
 interface Props {
   lots: LotWithDetails[];

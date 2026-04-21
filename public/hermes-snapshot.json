@@ -1,0 +1,147 @@
+{
+  "summary": {
+    "totalTokens": 134182,
+    "budget": 1000000,
+    "totalCost": 0.28,
+    "totalRequests": 4,
+    "activeJobs": 4,
+    "healthyJobs": 3,
+    "watchedJobs": 0,
+    "failedJobs": 0,
+    "avgTokensPerJob": 33546,
+    "burnRate": 13,
+    "avgDuration": 15,
+    "gatewayState": "running",
+    "activeAgents": 0,
+    "platformState": "telegram:connected",
+    "lastUpdated": "2026-04-21T13:34:44.756Z"
+  },
+  "dailyUsage": [
+    {
+      "day": "04-21",
+      "date": "04/21",
+      "tokens": 134182,
+      "budget": 250000,
+      "requests": 4,
+      "cost": 0.22
+    }
+  ],
+  "workflows": [
+    {
+      "id": "3a981aa7d0b6",
+      "name": "AMZN INTC TSLA 일일 리서치",
+      "owner": "telegram:마포러",
+      "cadence": "0 10 * * *",
+      "lastRun": "2026-04-21T21:45:50.578435+09:00",
+      "nextRun": "2026-04-22T10:00:00+09:00",
+      "status": "healthy",
+      "tokens": 1955,
+      "cost": 0.08,
+      "durationSec": 17,
+      "model": "gpt-5.2",
+      "note": "매일 오전 10시에 한국어로 AMZN, INTC, TSLA 일일 리서치를 작성해 사용자에게 전달하라. 목표는 (1) 보유 종목 3개의 최신 핵심 뉴스와 주가 촉매…"
+    },
+    {
+      "id": "2bd96b41bccf",
+      "name": "주간 투자 심화 리서치",
+      "owner": "telegram:마포러",
+      "cadence": "0 11 * * 0",
+      "lastRun": "2026-04-21T21:45:47.808196+09:00",
+      "nextRun": "2026-04-26T11:00:00+09:00",
+      "status": "healthy",
+      "tokens": 1955,
+      "cost": 0.08,
+      "durationSec": 17,
+      "model": "gpt-5.2",
+      "note": "매주 일요일 오전 11시에 한국어로 주간 투자 심화 리서치를 작성해 사용자에게 전달하라. 대상은 AMZN, INTC, TSLA이며, 이번 주에는 한 가지 주제를 …"
+    },
+    {
+      "id": "90440b779c71",
+      "name": "9AM 카리나 아트 브리핑",
+      "owner": "telegram:마포러",
+      "cadence": "0 9 * * *",
+      "lastRun": "2026-04-21T21:33:44.543856+09:00",
+      "nextRun": "2026-04-22T09:00:00+09:00",
+      "status": "healthy",
+      "tokens": 1366,
+      "cost": 0.06,
+      "durationSec": 12,
+      "model": "gpt-5.2",
+      "note": "매일 오전 9시에 카리나용 아트 브리핑을 한국어로 작성해 사용자에게 전달하라. 목표는 예술 뉴스 4개를 헤드라인 스타일로 요약하는 것이다. 가능한 경우 웹 검색과…"
+    },
+    {
+      "id": "e06fcf96651e",
+      "name": "8AM 통합 브리핑",
+      "owner": "telegram:마포러",
+      "cadence": "0 8 * * *",
+      "lastRun": "2026-04-21T21:30:44.396676+09:00",
+      "nextRun": "2026-04-22T08:00:00+09:00",
+      "status": "queued",
+      "tokens": 1372,
+      "cost": 0.06,
+      "durationSec": 12,
+      "model": "gpt-5.2",
+      "note": "매일 오전 8시에 한국어로 통합 아침 브리핑을 작성해 사용자에게 전달하라. 포함 항목: 1) 오늘의 복약 확인(기존 메모 기준으로 아침 약 관련 정보가 있으면 반…"
+    }
+  ],
+  "modelUsage": [
+    {
+      "model": "unknown",
+      "tokens": 128906,
+      "share": 100
+    }
+  ],
+  "recentEvents": [
+    {
+      "id": "3a981aa7d0b6-0",
+      "time": "2026-04-21T21:45:50.578435+09:00",
+      "title": "AMZN INTC TSLA 일일 리서치",
+      "detail": "0 10 * * * · 정상 완료",
+      "tokens": 1955,
+      "status": "success"
+    },
+    {
+      "id": "2bd96b41bccf-1",
+      "time": "2026-04-21T21:45:47.808196+09:00",
+      "title": "주간 투자 심화 리서치",
+      "detail": "0 11 * * 0 · 정상 완료",
+      "tokens": 1955,
+      "status": "success"
+    },
+    {
+      "id": "90440b779c71-2",
+      "time": "2026-04-21T21:33:44.543856+09:00",
+      "title": "9AM 카리나 아트 브리핑",
+      "detail": "0 9 * * * · 정상 완료",
+      "tokens": 1366,
+      "status": "success"
+    },
+    {
+      "id": "e06fcf96651e-3",
+      "time": "2026-04-21T21:30:44.396676+09:00",
+      "title": "8AM 통합 브리핑",
+      "detail": "0 8 * * * · 대기/감시 중",
+      "tokens": 1372,
+      "status": "success"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "healthy",
+      "level": "info",
+      "title": "실패한 작업 없음",
+      "detail": "현재 스냅샷 기준으로 실패한 Hermes 작업은 없습니다."
+    },
+    {
+      "id": "optimization",
+      "level": "info",
+      "title": "모델 최적화 여지",
+      "detail": "큰 프롬프트 작업은 더 작은 모델로 분리하면 비용 절감 여지가 있습니다."
+    }
+  ],
+  "source": {
+    "jobsUpdatedAt": "2026-04-21T21:45:50.579329+09:00",
+    "sessionsUpdatedAt": "2026-04-21T22:11:45.996572",
+    "gatewayUpdatedAt": "2026-04-21T12:24:11.177866+00:00"
+  }
+}

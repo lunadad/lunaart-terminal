@@ -1,40 +1,16 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useTheme } from './ThemeProvider';
+import { getHermesSummary } from '@/lib/hermes-monitor-data';
 
-const VERSION = 'v0.1.0';
+const VERSION = 'v1.0.0';
 
 const navItems = [
-  {
-    href: '/',
-    label: 'Auction Feed',
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
-      </svg>
-    ),
-  },
-  {
-    href: '/spotlight',
-    label: 'Spotlight',
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-      </svg>
-    ),
-  },
-  {
-    href: '/calendar',
-    label: 'Calendar',
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
-      </svg>
-    ),
-  },
+  { id: 'overview', label: 'Overview', hint: '요약 / 상태' },
+  { id: 'tokens', label: 'Tokens', hint: '추세 / 예산' },
+  { id: 'jobs', label: 'Jobs', hint: '워크플로 / 큐' },
+  { id: 'alerts', label: 'Alerts', hint: '경고 / 메모' },
 ];
 
 function SunIcon() {
@@ -53,167 +29,105 @@ function MoonIcon() {
   );
 }
 
-function HamburgerIcon() {
+function RefreshIcon() {
   return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001m0 0V4.356m0 4.991l-3.184-3.184a8.25 8.25 0 00-13.091 3.67M7.341 14.652H2.35m0 0v4.992m0-4.993l3.18 3.18a8.25 8.25 0 0013.084-3.666" />
     </svg>
   );
 }
 
 export default function Sidebar() {
-  const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('overview');
+  const [lastRefreshed, setLastRefreshed] = useState<string>(() => {
+    if (typeof window === 'undefined') return '지금';
+    return localStorage.getItem('hermes-last-refresh') ?? '지금';
+  });
+  const summary = getHermesSummary();
 
-  // Crawl controls state
-  const [scheduleTime, setScheduleTime] = useState(() =>
-    typeof window !== 'undefined' ? (localStorage.getItem('crawlSchedule') ?? '09:00') : '09:00'
-  );
-  const [editingSchedule, setEditingSchedule] = useState(false);
-  const [tempTime, setTempTime] = useState('09:00');
-  const [crawling, setCrawling] = useState(false);
-  const [lastCrawled, setLastCrawled] = useState<string | null>(() =>
-    typeof window !== 'undefined' ? localStorage.getItem('lastCrawled') : null
-  );
-  const timeInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (editingSchedule) timeInputRef.current?.focus();
-  }, [editingSchedule]);
-
-  function openScheduleEdit() { setTempTime(scheduleTime); setEditingSchedule(true); }
-  function saveSchedule() {
-    setScheduleTime(tempTime);
-    localStorage.setItem('crawlSchedule', tempTime);
-    setEditingSchedule(false);
-  }
-  async function runCrawl() {
-    setCrawling(true);
-    await new Promise(r => setTimeout(r, 1800));
-    const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
-    setLastCrawled(now);
-    localStorage.setItem('lastCrawled', now);
-    setCrawling(false);
-  }
-
-  // Close mobile menu on route change
-  useEffect(() => {
+  function scrollToSection(id: string) {
+    const element = document.getElementById(id);
+    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setActiveSection(id);
     setMobileOpen(false);
-  }, [pathname]);
+  }
 
-  // Close on escape
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setMobileOpen(false); };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
+  function refreshSnapshot() {
+    const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+    localStorage.setItem('hermes-last-refresh', now);
+    setLastRefreshed(now);
+  }
 
   const sidebarContent = (
     <>
-      {/* Logo */}
       <div className="p-5 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-            <span className="text-white font-bold text-sm">LT</span>
+            <span className="text-white font-bold text-sm">HM</span>
           </div>
           <div>
-            <h1 className="text-sm font-bold tracking-wide text-foreground">LunaArt</h1>
-            <p className="text-[10px] text-muted tracking-widest uppercase">Terminal</p>
+            <h1 className="text-sm font-bold tracking-wide text-foreground">Hermes</h1>
+            <p className="text-[10px] text-muted tracking-widest uppercase">Monitor</p>
           </div>
         </div>
-        {/* Mobile close button */}
         <button
           onClick={() => setMobileOpen(false)}
           className="md:hidden p-1 rounded-lg text-muted hover:text-foreground hover:bg-surface-hover transition-colors"
         >
-          <CloseIcon />
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = activeSection === item.id;
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className={`w-full text-left flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                 isActive
-                  ? 'bg-accent/15 text-accent font-medium'
+                  ? 'bg-accent/15 text-accent font-medium border border-accent/20'
                   : 'text-text-secondary hover:bg-surface-hover hover:text-foreground'
               }`}
             >
-              {item.icon}
-              {item.label}
-            </Link>
+              <span className="min-w-0">
+                <span className="block">{item.label}</span>
+                <span className="block text-[10px] opacity-70 mt-0.5">{item.hint}</span>
+              </span>
+              <span className="w-2 h-2 rounded-full bg-current opacity-60 shrink-0" />
+            </button>
           );
         })}
       </nav>
 
-      {/* Crawl Controls */}
-      <div className="px-4 pt-4 pb-2 border-t border-border space-y-2">
-        <div className="flex items-center justify-between gap-1.5">
-          {editingSchedule ? (
-            <div className="flex items-center gap-1 flex-1">
-              <input
-                ref={timeInputRef}
-                type="time"
-                value={tempTime}
-                onChange={e => setTempTime(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') saveSchedule(); if (e.key === 'Escape') setEditingSchedule(false); }}
-                className="flex-1 min-w-0 px-2 py-1 text-xs bg-background border border-accent rounded font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
-              />
-              <button onClick={saveSchedule} className="px-2 py-1 text-[10px] bg-accent text-background rounded font-medium hover:bg-accent/80 transition-colors shrink-0">저장</button>
-              <button onClick={() => setEditingSchedule(false)} className="px-1.5 py-1 text-[10px] text-muted hover:text-foreground transition-colors shrink-0">✕</button>
-            </div>
-          ) : (
-            <button
-              onClick={openScheduleEdit}
-              className="flex items-center gap-1.5 flex-1 min-w-0 px-2.5 py-1.5 text-[11px] bg-background border border-border rounded-lg text-text-secondary hover:border-border-light hover:text-foreground transition-all"
-            >
-              <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="truncate">매일 <span className="font-mono text-foreground">{scheduleTime}</span> KST</span>
-              <svg className="w-2.5 h-2.5 opacity-40 shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-            </button>
-          )}
-          <button
-            onClick={runCrawl}
-            disabled={crawling}
-            className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] bg-accent/10 border border-accent/30 rounded-lg text-accent hover:bg-accent/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-          >
-            {crawling ? (
-              <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-              </svg>
-            ) : (
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            )}
-            {crawling ? '크롤링 중' : '지금'}
-          </button>
+      <div className="px-4 pt-4 pb-3 border-t border-border space-y-3">
+        <div className="grid grid-cols-2 gap-2 text-[11px]">
+          <div className="rounded-xl border border-border bg-background p-3">
+            <p className="text-muted uppercase tracking-[0.2em] text-[9px]">Burn</p>
+            <p className="mt-1 font-semibold text-foreground">{summary.burnRate}%</p>
+          </div>
+          <div className="rounded-xl border border-border bg-background p-3">
+            <p className="text-muted uppercase tracking-[0.2em] text-[9px]">Jobs</p>
+            <p className="mt-1 font-semibold text-foreground">{summary.activeJobs}</p>
+          </div>
         </div>
-        {lastCrawled && !crawling && (
-          <p className="text-[9px] text-muted/70 font-mono truncate">마지막: {lastCrawled}</p>
-        )}
+        <button
+          onClick={refreshSnapshot}
+          className="w-full flex items-center justify-between gap-2 px-3 py-2 text-[11px] bg-background border border-border rounded-xl text-text-secondary hover:border-border-light hover:text-foreground transition-all"
+        >
+          <span className="inline-flex items-center gap-2">
+            <RefreshIcon />
+            Snapshot refresh
+          </span>
+          <span className="font-mono truncate">{lastRefreshed}</span>
+        </button>
       </div>
 
-      {/* Theme Toggle + Status */}
       <div className="p-4 border-t border-border space-y-3">
         <button
           onClick={toggleTheme}
@@ -237,9 +151,11 @@ export default function Sidebar() {
         <div>
           <div className="flex items-center gap-2 text-xs text-muted">
             <span className="w-2 h-2 rounded-full bg-green animate-pulse-dot shrink-0" />
-            Live Data Feed
+            Live Snapshot
           </div>
-          <p className="text-[10px] text-muted mt-1.5 font-mono">Last updated: 2 min ago</p>
+          <p className="text-[10px] text-muted mt-1.5 font-mono truncate">
+            {summary.totalRequests.toLocaleString()} requests · {summary.totalTokens.toLocaleString()} tokens
+          </p>
         </div>
         <p className="text-[9px] font-mono text-muted/40 text-right select-none">{VERSION}</p>
       </div>
@@ -248,19 +164,20 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-surface border-b border-border px-4 py-3 flex items-center justify-between">
         <button
           onClick={() => setMobileOpen(true)}
           className="p-1.5 rounded-lg text-foreground hover:bg-surface-hover transition-colors"
         >
-          <HamburgerIcon />
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
         </button>
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center">
-            <span className="text-white font-bold text-[10px]">LT</span>
+            <span className="text-white font-bold text-[10px]">HM</span>
           </div>
-          <span className="text-sm font-bold text-foreground">LunaArt</span>
+          <span className="text-sm font-bold text-foreground">Hermes</span>
         </div>
         <button
           onClick={toggleTheme}
@@ -270,7 +187,6 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
@@ -278,11 +194,10 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Sidebar — mobile: slide-over drawer, desktop: fixed */}
       <aside
         className={`
           fixed md:relative z-50 md:z-auto
-          w-[260px] md:w-[220px] h-full
+          w-[280px] md:w-[240px] h-full
           bg-surface border-r border-border
           flex flex-col shrink-0
           transition-transform duration-300 ease-in-out
