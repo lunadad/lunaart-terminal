@@ -16,7 +16,7 @@ import {
 import { formatKst } from '@/lib/hermes-format';
 import type { HermesMonitorSnapshot } from '@/lib/hermes-live-data';
 
-const API_URL = '/hermes-terminal/hermes-snapshot.json';
+const API_URL = '/lunaart-terminal/hermes-snapshot.json';
 
 const numberFormatter = new Intl.NumberFormat('en-US');
 const currencyFormatter = new Intl.NumberFormat('en-US', {

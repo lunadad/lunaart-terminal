@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: '/hermes-terminal',
+  basePath: '/lunaart-terminal',
   images: { unoptimized: true },
 };
 
