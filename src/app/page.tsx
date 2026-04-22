@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { allLots, getMarketPulse, getRisingArtists } from '@/lib/mock-data';
+import { allLots, auctionHouses, getMarketPulse, getRisingArtists, saleEvents } from '@/lib/mock-data';
 import { TimeFilter, MediumFilter, PriceRange } from '@/lib/types';
 import MarketPulseBar from '@/components/MarketPulseBar';
 import FilterBar from '@/components/FilterBar';
@@ -15,6 +15,30 @@ export default function AuctionFeedPage() {
   const [mediumFilter, setMediumFilter] = useState<MediumFilter>('all');
   const [priceRange, setPriceRange] = useState<PriceRange>('all');
   const [auctionHouse, setAuctionHouse] = useState('all');
+
+  const sourceSummary = useMemo(() => {
+    const lotsByHouse = auctionHouses.map(house => ({
+      id: house.id,
+      name: house.name,
+      lots: allLots.filter(lot => lot.auctionHouseId === house.id).length,
+      sales: saleEvents.filter(event => event.auctionHouseId === house.id).length,
+    }));
+
+    const latestSaleDate = saleEvents
+      .map(event => new Date(event.date))
+      .sort((a, b) => b.getTime() - a.getTime())[0];
+
+    const monthCoverage = new Set(saleEvents.map(event => event.date.slice(0, 7))).size;
+
+    return {
+      houses: auctionHouses.length,
+      lots: allLots.length,
+      sales: saleEvents.length,
+      latestSaleDate,
+      monthCoverage,
+      lotsByHouse,
+    };
+  }, []);
 
   const filteredLots = useMemo(() => {
     let lots = [...allLots];
@@ -71,6 +95,31 @@ export default function AuctionFeedPage() {
             {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
           </p>
           <p className="text-[10px] md:text-xs text-text-secondary">{filteredLots.length} lots</p>
+        </div>
+      </div>
+
+      {/* Source Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+        <div className="bg-surface border border-border rounded-xl p-4">
+          <p className="text-[10px] text-muted uppercase tracking-widest">Source snapshot</p>
+          <p className="mt-1 text-sm font-semibold text-foreground">{sourceSummary.houses} auction houses</p>
+          <p className="text-xs text-text-secondary mt-1">Christie&apos;s + Sotheby&apos;s · {sourceSummary.sales} sales · {sourceSummary.lots} lots</p>
+        </div>
+        <div className="bg-surface border border-border rounded-xl p-4">
+          <p className="text-[10px] text-muted uppercase tracking-widest">Coverage window</p>
+          <p className="mt-1 text-sm font-semibold text-foreground">{sourceSummary.monthCoverage} tracked months</p>
+          <p className="text-xs text-text-secondary mt-1">Freshest event: {sourceSummary.latestSaleDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+        </div>
+        <div className="bg-surface border border-border rounded-xl p-4">
+          <p className="text-[10px] text-muted uppercase tracking-widest">House balance</p>
+          <div className="mt-1 space-y-1">
+            {sourceSummary.lotsByHouse.map(item => (
+              <div key={item.id} className="flex items-center justify-between text-xs">
+                <span className="text-text-secondary">{item.name}</span>
+                <span className="font-mono text-foreground">{item.lots} lots / {item.sales} sales</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

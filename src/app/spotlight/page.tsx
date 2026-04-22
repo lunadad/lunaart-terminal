@@ -5,6 +5,46 @@ import { allLots, getRisingArtists, formatCurrency, formatFullCurrency, artists 
 import { LotWithDetails } from '@/lib/types';
 
 type Tab = 'rising' | 'hotlots' | 'liquidity' | 'volatility';
+type Decision = 'BUY' | 'WATCH' | 'AVOID';
+
+const DECISION_STYLES: Record<Decision, { bg: string; text: string; ring: string; note: string }> = {
+  BUY: { bg: 'bg-green/10', text: 'text-green', ring: 'border-green/20', note: 'Strong momentum + healthy demand' },
+  WATCH: { bg: 'bg-orange/10', text: 'text-orange', ring: 'border-orange/20', note: 'Interesting, but needs a second look' },
+  AVOID: { bg: 'bg-red/10', text: 'text-red', ring: 'border-red/20', note: 'Too noisy or too volatile right now' },
+};
+
+function getMomentumDecision(momentum: number, lotsSold: number): Decision {
+  if (lotsSold >= 4 && momentum >= 35) return 'BUY';
+  if (lotsSold >= 2 && momentum >= 18) return 'WATCH';
+  return 'AVOID';
+}
+
+function getHotLotDecision(estimateRatio: number): Decision {
+  if (estimateRatio >= 40) return 'BUY';
+  if (estimateRatio >= 10) return 'WATCH';
+  return 'AVOID';
+}
+
+function getLiquidityDecision(sellThrough: number, totalVolume: number): Decision {
+  if (sellThrough >= 0.8 && totalVolume >= 3_000_000) return 'BUY';
+  if (sellThrough >= 0.65) return 'WATCH';
+  return 'AVOID';
+}
+
+function getVolatilityDecision(cv: number): Decision {
+  if (cv >= 45) return 'AVOID';
+  if (cv >= 25) return 'WATCH';
+  return 'BUY';
+}
+
+function DecisionBadge({ decision }: { decision: Decision }) {
+  const styles = DECISION_STYLES[decision];
+  return (
+    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider ${styles.bg} ${styles.text} ${styles.ring}`}>
+      {decision}
+    </span>
+  );
+}
 
 export default function SpotlightPage() {
   const [activeTab, setActiveTab] = useState<Tab>('rising');
@@ -74,6 +114,19 @@ export default function SpotlightPage() {
       .slice(0, 12);
   }, []);
 
+  const decisionSnapshot = useMemo(() => {
+    const decisions = [
+      ...risingArtists.map(ra => getMomentumDecision(ra.momentum, ra.lotsSold)),
+      ...hotLots.map(lot => getHotLotDecision(lot.estimateRatio)),
+      ...liquidityData.map(d => getLiquidityDecision(d.sellThrough, d.totalVolume)),
+      ...volatilityData.map(d => getVolatilityDecision(d.cv)),
+    ];
+    return decisions.reduce((acc, decision) => {
+      acc[decision] += 1;
+      return acc;
+    }, { BUY: 0, WATCH: 0, AVOID: 0 } as Record<Decision, number>);
+  }, [hotLots, liquidityData, risingArtists, volatilityData]);
+
   const tabs: { key: Tab; label: string; labelEn: string }[] = [
     { key: 'rising', label: 'Rising Artists', labelEn: '급상승 작가' },
     { key: 'hotlots', label: 'Hot Lots', labelEn: '추정가 초과 작품' },
@@ -87,6 +140,23 @@ export default function SpotlightPage() {
       <div>
         <h1 className="text-lg md:text-xl font-bold text-foreground">Spotlight Dashboard</h1>
         <p className="text-xs md:text-sm text-muted mt-0.5">주목 작가 &middot; 작품 인사이트</p>
+      </div>
+
+      <div className="bg-surface border border-border rounded-xl p-4 md:p-5">
+        <div className="flex flex-wrap items-center gap-2 justify-between">
+          <div>
+            <p className="text-[10px] text-muted uppercase tracking-widest">Decision lens</p>
+            <p className="text-xs md:text-sm text-text-secondary mt-1">BUY = strong demand · WATCH = promising but mixed · AVOID = high noise or unstable supply</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {(['BUY', 'WATCH', 'AVOID'] as Decision[]).map(decision => (
+              <div key={decision} className="flex items-center gap-2 rounded-full border px-3 py-1.5 bg-background">
+                <DecisionBadge decision={decision} />
+                <span className="text-xs font-mono text-text-secondary">{decisionSnapshot[decision]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Tab Navigation */}
@@ -125,6 +195,7 @@ export default function SpotlightPage() {
                     <span className="px-1.5 md:px-2 py-0.5 rounded-full bg-green/10 text-green text-[10px] md:text-xs font-mono font-bold">
                       +{ra.momentum.toFixed(1)}%
                     </span>
+                    <DecisionBadge decision={getMomentumDecision(ra.momentum, ra.lotsSold)} />
                     <span className="text-[10px] md:text-xs text-muted hidden sm:inline">{ra.artist.nationality} &middot; b.{ra.artist.birthYear}</span>
                   </div>
                   <p className="text-xs md:text-sm text-text-secondary mt-1 line-clamp-2">{ra.reason}</p>
@@ -163,6 +234,7 @@ export default function SpotlightPage() {
                   <th className="text-left p-3 text-xs text-muted font-medium">Artist</th>
                   <th className="text-left p-3 text-xs text-muted font-medium">Work</th>
                   <th className="text-left p-3 text-xs text-muted font-medium">House</th>
+                  <th className="text-left p-3 text-xs text-muted font-medium">Decision</th>
                   <th className="text-right p-3 text-xs text-muted font-medium">Estimate High</th>
                   <th className="text-right p-3 text-xs text-muted font-medium">Final Price</th>
                   <th className="text-right p-3 text-xs text-muted font-medium">Over Est.</th>
@@ -188,6 +260,9 @@ export default function SpotlightPage() {
                         {lot.auctionHouse.name === "Christie's" ? 'CHR' : 'SOT'}
                       </span>
                     </td>
+                    <td className="p-3">
+                      <DecisionBadge decision={getHotLotDecision(lot.estimateRatio)} />
+                    </td>
                     <td className="p-3 text-right text-text-secondary font-mono">
                       {formatFullCurrency(lot.estimateHigh, lot.currency)}
                     </td>
@@ -211,7 +286,10 @@ export default function SpotlightPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 animate-fade-in">
           {liquidityData.map((d) => (
             <div key={d.artist.id} className="bg-surface border border-border rounded-xl p-4 hover:border-border-light transition-all">
-              <h3 className="text-sm font-bold text-foreground">{d.artist.name}</h3>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-sm font-bold text-foreground">{d.artist.name}</h3>
+                <DecisionBadge decision={getLiquidityDecision(d.sellThrough, d.totalVolume)} />
+              </div>
               <p className="text-[10px] text-muted mt-0.5">{d.artist.nationality} &middot; {d.artist.category}</p>
               <div className="mt-3 space-y-2">
                 <div className="flex justify-between text-xs">
@@ -250,8 +328,9 @@ export default function SpotlightPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             {volatilityData.map((d) => (
               <div key={d.artist.id} className="bg-surface border border-border rounded-xl p-4 hover:border-border-light transition-all">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-sm font-bold text-foreground">{d.artist.name}</h3>
+                  <DecisionBadge decision={getVolatilityDecision(d.cv)} />
                   {d.cv > 80 && (
                     <span className="px-1.5 py-0.5 rounded text-[10px] bg-red/10 text-red font-medium">HIGH RISK</span>
                   )}

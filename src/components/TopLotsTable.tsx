@@ -56,7 +56,7 @@ export default function TopLotsTable({ lots }: Props) {
                     </span>
                   </td>
                   <td className="py-2.5 px-2 text-right text-green font-mono font-medium">
-                    ${lot.result.usdEquivalent?.toLocaleString()}
+                    {formatFullCurrency(lot.result.usdEquivalent || 0, 'USD')}
                   </td>
                   <td className={`py-2.5 px-2 text-right font-mono ${ratio > 0 ? 'text-green' : 'text-red'}`}>
                     {ratio > 0 ? '+' : ''}{ratio.toFixed(0)}%

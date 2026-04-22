@@ -23,31 +23,19 @@ function applyTheme(theme: Theme) {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
-  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'dark';
+    return (localStorage.getItem('artpan-theme') as Theme | null) ?? 'dark';
+  });
 
-  // On mount: read saved theme
   useEffect(() => {
-    const saved = localStorage.getItem('artpan-theme') as Theme | null;
-    if (saved) {
-      setTheme(saved);
-      applyTheme(saved);
-    }
-    setMounted(true);
-  }, []);
+    applyTheme(theme);
+    localStorage.setItem('artpan-theme', theme);
+  }, [theme]);
 
   const toggleTheme = useCallback(() => {
-    setTheme(prev => {
-      const next = prev === 'dark' ? 'light' : 'dark';
-      applyTheme(next);
-      localStorage.setItem('artpan-theme', next);
-      return next;
-    });
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   }, []);
-
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

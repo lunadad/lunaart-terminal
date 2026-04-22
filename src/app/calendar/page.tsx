@@ -376,6 +376,11 @@ export default function CalendarPage() {
 
   const christiesCount = filtered.filter(a => a.house === 'christies').length;
   const sothebysCount = filtered.filter(a => a.house === 'sothebys').length;
+  const liveCount = filtered.filter(a => a.kind === 'live').length;
+  const onlineCount = filtered.filter(a => a.kind === 'online').length;
+  const uniqueCities = new Set(filtered.map(a => a.location)).size;
+  const firstMonth = filtered[0]?.dateSort.slice(0, 7);
+  const lastMonth = filtered[filtered.length - 1]?.dateSort.slice(0, 7);
 
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6">
@@ -401,6 +406,24 @@ export default function CalendarPage() {
                 <p className="text-[10px] text-muted">Sotheby&apos;s</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="bg-surface border border-border rounded-xl p-4">
+            <p className="text-[10px] text-muted uppercase tracking-widest">Source snapshot</p>
+            <p className="mt-1 text-sm font-semibold text-foreground">Christie&apos;s + Sotheby&apos;s</p>
+            <p className="text-xs text-text-secondary mt-1">{filtered.length} auctions · {uniqueCities} cities</p>
+          </div>
+          <div className="bg-surface border border-border rounded-xl p-4">
+            <p className="text-[10px] text-muted uppercase tracking-widest">Format mix</p>
+            <p className="mt-1 text-sm font-semibold text-foreground">{liveCount} live / {onlineCount} online</p>
+            <p className="text-xs text-text-secondary mt-1">Live dates are easier to scan; online lots stay open longer.</p>
+          </div>
+          <div className="bg-surface border border-border rounded-xl p-4">
+            <p className="text-[10px] text-muted uppercase tracking-widest">Coverage window</p>
+            <p className="mt-1 text-sm font-semibold text-foreground">{firstMonth ? MONTH_LABELS[firstMonth] ?? firstMonth : 'No data'} → {lastMonth ? MONTH_LABELS[lastMonth] ?? lastMonth : 'No data'}</p>
+            <p className="text-xs text-text-secondary mt-1">House split: {christiesCount} Christie&apos;s / {sothebysCount} Sotheby&apos;s</p>
           </div>
         </div>
 

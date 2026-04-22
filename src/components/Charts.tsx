@@ -12,12 +12,25 @@ const COLORS = {
   sothebys: '#8b9b00',
 };
 
-function CustomTooltip({ active, payload, label }: any) {
+type TooltipPoint = {
+  dataKey: string;
+  color?: string;
+  name?: string;
+  value?: string | number;
+};
+
+type TooltipProps = {
+  active?: boolean;
+  payload?: TooltipPoint[];
+  label?: string | number;
+};
+
+function CustomTooltip({ active, payload, label }: TooltipProps) {
   if (!active || !payload) return null;
   return (
     <div className="bg-surface border border-border-light rounded-lg p-3 shadow-xl">
       <p className="text-xs font-medium text-foreground mb-1">{label}</p>
-      {payload.map((p: any) => (
+      {payload.map((p) => (
         <p key={p.dataKey} className="text-xs" style={{ color: p.color }}>
           {p.name}: ${p.value}M
         </p>
