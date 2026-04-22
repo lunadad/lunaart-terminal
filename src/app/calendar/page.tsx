@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { calendarAuctions } from '@/lib/calendar-data';
 
 type House = 'all' | 'christies' | 'sothebys';
 type AuctionKind = 'all' | 'live' | 'online';
@@ -18,318 +19,13 @@ interface Auction {
 const CHR_STYLE = { background: 'rgba(249,115,22,0.12)', color: '#f97316' };
 const SOT_STYLE = { background: 'rgba(139,155,0,0.14)', color: '#8b9b00' };
 
-const MONTH_LABELS: Record<string, string> = {
-  '2026-03': 'March 2026',
-  '2026-04': 'April 2026',
-  '2026-05': 'May 2026',
-};
+function formatMonthLabel(monthKey: string) {
+  const [year, month] = monthKey.split('-').map(Number);
+  if (!year || !month) return monthKey;
+  return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(new Date(year, month - 1, 1));
+}
 
-const auctions: Auction[] = [
-  // ── March 2026 · Christie's ──────────────────────────────────────────
-  {
-    house: 'christies',
-    title: "An Exceptional René Engel Collection",
-    date: "10 Mar",
-    dateSort: "2026-03-10",
-    location: "London",
-    href: "https://www.christies.com/en/auction/an-exceptional-ren-engel-collection-31341/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Prints and Multiples",
-    date: "12–26 Mar",
-    dateSort: "2026-03-12",
-    location: "London",
-    href: "https://www.christies.com/en/auction/prints-and-multiples-24150-cks/",
-    kind: 'online',
-  },
-  {
-    house: 'christies',
-    title: "Contemporary Edition: London",
-    date: "17–31 Mar",
-    dateSort: "2026-03-17",
-    location: "London",
-    href: "https://www.christies.com/en/auction/contemporary-edition-london-24151-cks/",
-    kind: 'online',
-  },
-  {
-    house: 'christies',
-    title: "Modern British and Irish Art Evening Sale",
-    date: "18 Mar",
-    dateSort: "2026-03-18",
-    location: "London",
-    href: "https://www.christies.com/en/auction/modern-british-and-irish-art-evening-sale-31053/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Modern British and Irish Art Day Sale",
-    date: "19 Mar",
-    dateSort: "2026-03-19",
-    location: "London",
-    href: "https://www.christies.com/en/auction/modern-british-and-irish-art-day-sale-31054/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Japanese and Korean Art",
-    date: "24 Mar",
-    dateSort: "2026-03-24",
-    location: "New York",
-    href: "https://www.christies.com/en/auction/japanese-and-korean-art-24346-nyr/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "South Asian Modern + Contemporary Art",
-    date: "25 Mar",
-    dateSort: "2026-03-25a",
-    location: "New York",
-    href: "https://www.christies.com/en/auction/south-asian-modern-contemporary-art-31050/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Indian, Himalayan and Southeast Asian Art",
-    date: "25 Mar",
-    dateSort: "2026-03-25b",
-    location: "New York",
-    href: "https://www.christies.com/en/auction/indian-himalayan-and-southeast-asian-art-31055/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Chefs-d'oeuvre de la collection Veil-Picard",
-    date: "25 Mar",
-    dateSort: "2026-03-25c",
-    location: "Paris",
-    href: "https://www.christies.com/en/auction/chefs-d-oeuvre-de-la-collection-veil-picard-31113/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Marcel Nies: A Private Passion",
-    date: "26 Mar",
-    dateSort: "2026-03-26a",
-    location: "Paris",
-    href: "https://www.christies.com/en/auction/marcel-nies-a-private-passion-31320/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Important Chinese Art",
-    date: "26–27 Mar",
-    dateSort: "2026-03-26b",
-    location: "New York",
-    href: "https://www.christies.com/en/auction/important-chinese-art-30931/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "20th/21st Century Evening Sale",
-    date: "27 Mar",
-    dateSort: "2026-03-27",
-    location: "Hong Kong",
-    href: "https://www.christies.com/en/auction/20th-21st-century-evening-sale-23844-hgk/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "20th Century Day Sale",
-    date: "28 Mar",
-    dateSort: "2026-03-28a",
-    location: "Hong Kong",
-    href: "https://www.christies.com/en/auction/20th-century-day-sale-23845-hgk/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "21st Century Day Sale",
-    date: "28 Mar",
-    dateSort: "2026-03-28b",
-    location: "Hong Kong",
-    href: "https://www.christies.com/en/auction/21st-century-day-sale-23846-hgk/",
-    kind: 'live',
-  },
-
-  // ── March 2026 · Sotheby's ───────────────────────────────────────────
-  {
-    house: 'sothebys',
-    title: "Collection Jean-Marie Rossi, D'un monde l'autre, Part I",
-    date: "10 Mar",
-    dateSort: "2026-03-10b",
-    location: "Paris",
-    href: "https://www.sothebys.com/en/buy/auction/2026/collection-jean-marie-rossi-dun-monde-a-lautre-part-i-pf2619",
-    kind: 'live',
-  },
-  {
-    house: 'sothebys',
-    title: "Collection Jean-Marie Rossi, D'un monde l'autre, Part II",
-    date: "11 Mar",
-    dateSort: "2026-03-11a",
-    location: "Paris",
-    href: "https://www.sothebys.com/en/buy/auction/2026/collection-jean-marie-rossi-dun-monde-a-lautre-part-ii-pf2621",
-    kind: 'live',
-  },
-  {
-    house: 'sothebys',
-    title: "Chinese Archaic Jades from an Important Private Collection",
-    date: "4–11 Mar",
-    dateSort: "2026-03-11b",
-    location: "Hong Kong",
-    href: "https://www.sothebys.com/en/buy/auction/2026/chinese-archaic-jades-from-an-important-private-collection",
-    kind: 'online',
-  },
-  {
-    house: 'sothebys',
-    title: "Collection Jean-Marie Rossi, D'un monde l'autre, Part III",
-    date: "12 Mar",
-    dateSort: "2026-03-12b",
-    location: "Paris",
-    href: "https://www.sothebys.com/en/buy/auction/2026/collection-jean-marie-rossi-dun-monde-a-lautre-part-iii-pf2622",
-    kind: 'live',
-  },
-  {
-    house: 'sothebys',
-    title: "Design",
-    date: "5–12 Mar",
-    dateSort: "2026-03-12c",
-    location: "New York",
-    href: "https://www.sothebys.com/en/buy/auction/2026/design",
-    kind: 'online',
-  },
-  {
-    house: 'sothebys',
-    title: "Prints & Multiples",
-    date: "18–25 Mar",
-    dateSort: "2026-03-18b",
-    location: "London",
-    href: "https://www.sothebys.com/en/buy/auction/2026/prints-multiples",
-    kind: 'online',
-  },
-  {
-    house: 'sothebys',
-    title: "Indian & Himalayan Art, including Property from the Zimmerman Family Collection",
-    date: "24 Mar",
-    dateSort: "2026-03-24b",
-    location: "New York",
-    href: "https://www.sothebys.com/en/buy/auction/2026/indian-himalayan-art-including-property-from-the-zimmerman-family-collection",
-    kind: 'live',
-  },
-  {
-    house: 'sothebys',
-    title: "Huanghuali for the Scholar's Studio: An Important Private Collection",
-    date: "25 Mar",
-    dateSort: "2026-03-25d",
-    location: "New York",
-    href: "https://www.sothebys.com/en/buy/auction/2026/huanghuali-for-the-scholars-studio-an-important-private-collection-of-classical-chinese-furniture",
-    kind: 'live',
-  },
-  {
-    house: 'sothebys',
-    title: "Chinese Art",
-    date: "25 Mar",
-    dateSort: "2026-03-25e",
-    location: "New York",
-    href: "https://www.sothebys.com/en/buy/auction/2026/chinese-art",
-    kind: 'live',
-  },
-  {
-    house: 'sothebys',
-    title: "An Italian Collecting Journey — Chapter II",
-    date: "25 Mar",
-    dateSort: "2026-03-25f",
-    location: "Milan",
-    href: "https://www.sothebys.com/en/buy/auction/2026/an-italian-collecting-journey-chapter-ii",
-    kind: 'live',
-  },
-
-  // ── April 2026 · Christie's ──────────────────────────────────────────
-  {
-    house: 'christies',
-    title: "Collections: Including Ardbraccan House, Ireland and a Sicilian Palazzo",
-    date: "1–15 Apr",
-    dateSort: "2026-04-01",
-    location: "London",
-    href: "https://www.christies.com/en/auction/collections-including-ardbraccan-house-ireland-and-a-sicilian-palazzo-24511-cks/",
-    kind: 'online',
-  },
-  {
-    house: 'christies',
-    title: "Photographs",
-    date: "3–17 Apr",
-    dateSort: "2026-04-03",
-    location: "New York",
-    href: "https://www.christies.com/en/auction/photographs-24333-nyr/",
-    kind: 'online',
-  },
-  {
-    house: 'christies',
-    title: "Prints and Multiples",
-    date: "14–15 Apr",
-    dateSort: "2026-04-14",
-    location: "New York",
-    href: "https://www.christies.com/en/auction/prints-and-multiples-24335-nyr/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Radical Genius: Works on Paper from A Distinguished Private Collection",
-    date: "15 Apr",
-    dateSort: "2026-04-15a",
-    location: "Paris",
-    href: "https://www.christies.com/en/auction/radical-genius-works-on-paper-from-a-distinguished-private-collection-24844-par/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "20/21 Century Art — Evening Sale",
-    date: "15 Apr",
-    dateSort: "2026-04-15b",
-    location: "Paris",
-    href: "https://www.christies.com/en/auction/20-21-century-art-evening-sale-24598-par/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Art Contemporain",
-    date: "16 Apr",
-    dateSort: "2026-04-16",
-    location: "Paris",
-    href: "https://www.christies.com/en/auction/art-contemporain-24225-par/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "Art Impressionniste & Moderne",
-    date: "17 Apr",
-    dateSort: "2026-04-17",
-    location: "Paris",
-    href: "https://www.christies.com/en/auction/art-impressionniste-moderne-24599-par/",
-    kind: 'live',
-  },
-  {
-    house: 'christies',
-    title: "The Mary and Cheney Cowles Collection of Indian Painting and Calligraphy",
-    date: "28 Apr",
-    dateSort: "2026-04-28",
-    location: "London",
-    href: "https://www.christies.com/en/auction/the-mary-and-cheney-cowles-collection-of-indian-painting-and-calligraphy-24425-cks/",
-    kind: 'live',
-  },
-
-  // ── May 2026 · Christie's ────────────────────────────────────────────
-  {
-    house: 'christies',
-    title: "Design",
-    date: "26–27 May",
-    dateSort: "2026-05-26",
-    location: "Paris",
-    href: "https://www.christies.com/en/auction/design-24483-par/",
-    kind: 'live',
-  },
-];
+const auctions: Auction[] = calendarAuctions;
 
 function groupByMonth(list: Auction[]): [string, Auction[]][] {
   const groups: Record<string, Auction[]> = {};
@@ -422,7 +118,7 @@ export default function CalendarPage() {
           </div>
           <div className="bg-surface border border-border rounded-xl p-4">
             <p className="text-[10px] text-muted uppercase tracking-widest">Coverage window</p>
-            <p className="mt-1 text-sm font-semibold text-foreground">{firstMonth ? MONTH_LABELS[firstMonth] ?? firstMonth : 'No data'} → {lastMonth ? MONTH_LABELS[lastMonth] ?? lastMonth : 'No data'}</p>
+            <p className="mt-1 text-sm font-semibold text-foreground">{firstMonth ? formatMonthLabel(firstMonth) : 'No data'} → {lastMonth ? formatMonthLabel(lastMonth) : 'No data'}</p>
             <p className="text-xs text-text-secondary mt-1">House split: {christiesCount} Christie&apos;s / {sothebysCount} Sotheby&apos;s</p>
           </div>
         </div>
@@ -476,7 +172,7 @@ export default function CalendarPage() {
                 {/* Month header */}
                 <div className="flex items-center gap-3 mb-3">
                   <h2 className="text-[11px] font-semibold text-muted uppercase tracking-widest whitespace-nowrap">
-                    {MONTH_LABELS[monthKey] ?? monthKey}
+                    {formatMonthLabel(monthKey)}
                   </h2>
                   <span className="text-[10px] text-muted font-mono bg-surface border border-border rounded-full px-2 py-0.5">
                     {items.length}
