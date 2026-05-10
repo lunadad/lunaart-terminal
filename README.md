@@ -41,6 +41,15 @@ npm start
 npm run lint
 ```
 
+
+## Manual crawl pack
+
+For event-only manual crawling and monthly evening sale reviews, use:
+
+- `ops/manual-crawl/event_master_2026_confirmed.csv`
+- `ops/manual-crawl/monthly-review-template.md`
+- `ops/manual-crawl/ranking-queries.sql`
+
 ## Data notes
 
 The app uses curated auction data in `src/lib/christies-data.json` and `src/lib/sothebys-data.json`. The `scripts/fetch-christies.mjs` script can be used to refresh Christie’s data.
@@ -56,6 +65,12 @@ The app uses curated auction data in `src/lib/christies-data.json` and `src/lib/
 ## Deployment
 
 The app is set up for GitHub Pages deployment via `.github/workflows/deploy.yml`.
+
+### Render (GitHub + Postgres)
+
+- Blueprint file: `render.yaml`
+- Step-by-step guide: `docs-render-deploy.md`
+- `DATABASE_URL` is mapped from Render Postgres automatically in the blueprint.
 
 ## Notes
 

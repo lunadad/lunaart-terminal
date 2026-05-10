@@ -1,0 +1,12 @@
+event_id,house,sale_title,category,city,country,sale_date_local,timezone,currency,is_key_evening_sale,crawl_scope,status,notes
+2026-SBY-LON-MC-0304,Sothebys,Modern & Contemporary Evening Auction,Modern&Contemporary,London,UK,2026-03-04,Europe/London,GBP,Y,event_only,confirmed,Confirmed exact date
+2026-SBY-PAR-MC-0416,Sothebys,Art Moderne et Contemporain Evening Auction,Modern&Contemporary,Paris,FR,2026-04-16,Europe/Paris,EUR,Y,event_only,confirmed,Confirmed exact date
+2026-SBY-NY-NOW-0514,Sothebys,The Now & Contemporary Evening Auction,Contemporary,New York,US,2026-05-14,America/New_York,USD,Y,event_only,confirmed,Confirmed exact date
+2026-SBY-NY-MOD-0519,Sothebys,Modern Evening Auction,Modern,New York,US,2026-05-19,America/New_York,USD,Y,event_only,confirmed,Confirmed exact date
+2026-SBY-LON-MC-0624,Sothebys,Modern & Contemporary Evening Auction,Modern&Contemporary,London,UK,2026-06-24,Europe/London,GBP,Y,event_only,confirmed,Confirmed exact date
+2026-CHR-HK-2021-0327,Christies,20th/21st Century Evening Sale,20th/21st,Hong Kong,HK,2026-03-27,Asia/Hong_Kong,HKD,Y,event_only,confirmed,Confirmed exact date
+2026-CHR-NY-20TH-05XX,Christies,20th Century Evening Sale,20th,New York,US,2026-05-01,America/New_York,USD,Y,event_only,tbd_day,Month fixed (May) day TBD
+2026-CHR-NY-21ST-05XX,Christies,21st Century Evening Sale,21st,New York,US,2026-05-01,America/New_York,USD,Y,event_only,tbd_day,Month fixed (May) day TBD
+2026-CHR-LON-2021-10XX,Christies,20/21 London Evening Sales,20th/21st,London,UK,2026-10-01,Europe/London,GBP,Y,event_only,tbd_day,Month fixed (October) day TBD
+2026-CHR-NY-20TH-11XX,Christies,20th Century Evening Sale,20th,New York,US,2026-11-01,America/New_York,USD,Y,event_only,tbd_day,Month fixed (November) day TBD
+2026-CHR-NY-21ST-11XX,Christies,21st Century Evening Sale,21st,New York,US,2026-11-01,America/New_York,USD,Y,event_only,tbd_day,Month fixed (November) day TBD
