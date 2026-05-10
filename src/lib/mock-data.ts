@@ -135,23 +135,29 @@ export function getRisingArtists(): RisingArtist[] {
 }
 
 export function getMonthlyVolume() {
-  const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-
-  // 실제 3월 데이터 (양사)
-  const marSold = allLots.filter(l => l.result.sold && l.result.saleDate?.startsWith('2026-03'));
-  const christiesMar = marSold
-    .filter(l => l.auctionHouseId === 'christies')
-    .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
-  const sothebysMarVal = marSold
-    .filter(l => l.auctionHouseId === 'sothebys')
-    .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
+  const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'];
 
   // 이전 달은 업계 평균 기반 추정치
-  return months.map((month) => ({
-    month,
-    christies: month === 'Mar' ? Math.round(christiesMar) : Math.round(60 + Math.random() * 80),
-    sothebys: month === 'Mar' ? Math.round(sothebysMarVal) : Math.round(50 + Math.random() * 80),
-  }));
+  return months.map((month) => {
+    const monthIndex = months.indexOf(month) + 9;
+    const year = monthIndex <= 12 ? 2025 : 2026;
+    const monthNumber = monthIndex <= 12 ? monthIndex : monthIndex - 12;
+    const prefix = `${year}-${String(monthNumber).padStart(2, '0')}`;
+    const sold = allLots.filter(l => l.result.sold && l.result.saleDate?.startsWith(prefix));
+    const christies = sold
+      .filter(l => l.auctionHouseId === 'christies')
+      .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
+    const sothebys = sold
+      .filter(l => l.auctionHouseId === 'sothebys')
+      .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
+    const hasActualData = month === 'Mar' || month === 'Apr';
+
+    return {
+      month,
+      christies: hasActualData ? Math.round(christies) : Math.round(60 + Math.random() * 80),
+      sothebys: hasActualData ? Math.round(sothebys) : Math.round(50 + Math.random() * 80),
+    };
+  });
 }
 
 export function getCategoryPerformance() {

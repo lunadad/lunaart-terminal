@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTheme } from './ThemeProvider';
-import MonthlyReviewPanel from './MonthlyReviewPanel';
 
 const VERSION = 'v0.1.0';
 
@@ -200,7 +199,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="p-3 space-y-1">
+      <nav className="flex-1 p-3 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -219,8 +218,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      <MonthlyReviewPanel />
 
       {/* Crawl Controls */}
       <div className="px-4 pt-4 pb-2 border-t border-border space-y-2">
