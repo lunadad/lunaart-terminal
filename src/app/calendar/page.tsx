@@ -2,9 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import { calendarAuctions } from '@/lib/calendar-data';
+import { keyEveningSales2026 } from '@/lib/key-evening-sales';
 
 type House = 'all' | 'christies' | 'sothebys';
 type AuctionKind = 'all' | 'live' | 'online';
+type ViewMode = 'all' | 'key';
 
 interface Auction {
   house: 'christies' | 'sothebys';
@@ -14,10 +16,21 @@ interface Auction {
   location: string;
   href: string;
   kind: 'live' | 'online';
+  status?: 'confirmed' | 'tbd_day';
 }
 
 const CHR_STYLE = { background: 'rgba(249,115,22,0.12)', color: '#f97316' };
 const SOT_STYLE = { background: 'rgba(139,155,0,0.14)', color: '#8b9b00' };
+
+function statusPill(status: Auction['status']) {
+  if (status === 'confirmed') {
+    return { label: 'Confirmed', cls: 'text-green border-green/30 bg-green/10' };
+  }
+  if (status === 'tbd_day') {
+    return { label: 'TBD Day', cls: 'text-orange border-orange/30 bg-orange/10' };
+  }
+  return null;
+}
 
 function formatMonthLabel(monthKey: string) {
   const [year, month] = monthKey.split('-').map(Number);
@@ -25,12 +38,10 @@ function formatMonthLabel(monthKey: string) {
   return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(new Date(year, month - 1, 1));
 }
 
-const auctions: Auction[] = calendarAuctions;
-
 function groupByMonth(list: Auction[]): [string, Auction[]][] {
   const groups: Record<string, Auction[]> = {};
-  list.forEach(a => {
-    const key = a.dateSort.substring(0, 7); // "2026-03"
+  list.forEach((a) => {
+    const key = a.dateSort.substring(0, 7);
     if (!groups[key]) groups[key] = [];
     groups[key].push(a);
   });
@@ -57,37 +68,43 @@ function LocationIcon() {
 export default function CalendarPage() {
   const [activeHouse, setActiveHouse] = useState<House>('all');
   const [activeKind, setActiveKind] = useState<AuctionKind>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>('key');
+
+  const auctions: Auction[] = useMemo(
+    () => (viewMode === 'key' ? keyEveningSales2026 : calendarAuctions),
+    [viewMode],
+  );
 
   const filtered = useMemo(() => {
     return auctions
-      .filter(a => {
+      .filter((a) => {
         if (activeHouse !== 'all' && a.house !== activeHouse) return false;
         if (activeKind !== 'all' && a.kind !== activeKind) return false;
         return true;
       })
       .sort((a, b) => a.dateSort.localeCompare(b.dateSort));
-  }, [activeHouse, activeKind]);
+  }, [auctions, activeHouse, activeKind]);
 
   const grouped = groupByMonth(filtered);
 
-  const christiesCount = filtered.filter(a => a.house === 'christies').length;
-  const sothebysCount = filtered.filter(a => a.house === 'sothebys').length;
-  const liveCount = filtered.filter(a => a.kind === 'live').length;
-  const onlineCount = filtered.filter(a => a.kind === 'online').length;
-  const uniqueCities = new Set(filtered.map(a => a.location)).size;
+  const christiesCount = filtered.filter((a) => a.house === 'christies').length;
+  const sothebysCount = filtered.filter((a) => a.house === 'sothebys').length;
+  const liveCount = filtered.filter((a) => a.kind === 'live').length;
+  const onlineCount = filtered.filter((a) => a.kind === 'online').length;
+  const uniqueCities = new Set(filtered.map((a) => a.location)).size;
   const firstMonth = filtered[0]?.dateSort.slice(0, 7);
   const lastMonth = filtered[filtered.length - 1]?.dateSort.slice(0, 7);
 
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
-
-        {/* ── Header ── */}
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-lg font-bold text-foreground tracking-tight">Auction Calendar</h1>
             <p className="text-xs text-muted mt-0.5">
-              Upcoming fine art auctions · Christie&apos;s &amp; Sotheby&apos;s
+              {viewMode === 'key'
+                ? 'Key evening sales (manual schedule) · Christie\'s & Sotheby\'s'
+                : 'Upcoming fine art auctions · Christie\'s & Sotheby\'s'}
             </p>
           </div>
           <div className="text-right hidden sm:block">
@@ -108,13 +125,19 @@ export default function CalendarPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="bg-surface border border-border rounded-xl p-4">
             <p className="text-[10px] text-muted uppercase tracking-widest">Source snapshot</p>
-            <p className="mt-1 text-sm font-semibold text-foreground">Christie&apos;s + Sotheby&apos;s</p>
+            <p className="mt-1 text-sm font-semibold text-foreground">
+              {viewMode === 'key' ? 'Manual key event set' : 'Christie\'s + Sotheby\'s'}
+            </p>
             <p className="text-xs text-text-secondary mt-1">{filtered.length} auctions · {uniqueCities} cities</p>
           </div>
           <div className="bg-surface border border-border rounded-xl p-4">
             <p className="text-[10px] text-muted uppercase tracking-widest">Format mix</p>
             <p className="mt-1 text-sm font-semibold text-foreground">{liveCount} live / {onlineCount} online</p>
-            <p className="text-xs text-text-secondary mt-1">Live dates are easier to scan; online lots stay open longer.</p>
+            <p className="text-xs text-text-secondary mt-1">
+              {viewMode === 'key'
+                ? 'Key mode is event-only and focuses on evening live sales.'
+                : 'Live dates are easier to scan; online lots stay open longer.'}
+            </p>
           </div>
           <div className="bg-surface border border-border rounded-xl p-4">
             <p className="text-[10px] text-muted uppercase tracking-widest">Coverage window</p>
@@ -123,11 +146,28 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        {/* ── Filter Bar ── */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* House filter */}
           <div className="flex gap-0.5 bg-background border border-border rounded-lg p-1">
-            {(['all', 'christies', 'sothebys'] as House[]).map(h => (
+            {([
+              { key: 'key', label: 'Key Evening' },
+              { key: 'all', label: 'All Calendar' },
+            ] as { key: ViewMode; label: string }[]).map((mode) => (
+              <button
+                key={mode.key}
+                onClick={() => setViewMode(mode.key)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  viewMode === mode.key
+                    ? 'bg-accent/15 text-accent'
+                    : 'text-muted hover:text-foreground'
+                }`}
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-0.5 bg-background border border-border rounded-lg p-1">
+            {(['all', 'christies', 'sothebys'] as House[]).map((h) => (
               <button
                 key={h}
                 onClick={() => setActiveHouse(h)}
@@ -142,9 +182,8 @@ export default function CalendarPage() {
             ))}
           </div>
 
-          {/* Kind filter */}
           <div className="flex gap-0.5 bg-background border border-border rounded-lg p-1">
-            {(['all', 'live', 'online'] as AuctionKind[]).map(k => (
+            {(['all', 'live', 'online'] as AuctionKind[]).map((k) => (
               <button
                 key={k}
                 onClick={() => setActiveKind(k)}
@@ -162,14 +201,12 @@ export default function CalendarPage() {
           <span className="text-xs text-muted ml-auto font-mono">{filtered.length} auctions</span>
         </div>
 
-        {/* ── Monthly Sections ── */}
         {grouped.length === 0 ? (
           <div className="text-center py-16 text-muted text-sm">No auctions match the current filter.</div>
         ) : (
           <div className="space-y-8">
             {grouped.map(([monthKey, items]) => (
               <section key={monthKey}>
-                {/* Month header */}
                 <div className="flex items-center gap-3 mb-3">
                   <h2 className="text-[11px] font-semibold text-muted uppercase tracking-widest whitespace-nowrap">
                     {formatMonthLabel(monthKey)}
@@ -180,7 +217,6 @@ export default function CalendarPage() {
                   <div className="flex-1 h-px bg-border" />
                 </div>
 
-                {/* Auction rows */}
                 <div className="space-y-1.5">
                   {items.map((auction, idx) => (
                     <a
@@ -190,12 +226,8 @@ export default function CalendarPage() {
                       rel="noopener noreferrer"
                       className="group flex items-center gap-3 px-4 py-3 rounded-xl bg-surface border border-border hover:border-border-light hover:bg-surface-hover transition-all"
                     >
-                      {/* Date */}
-                      <span className="w-[72px] shrink-0 text-[11px] font-mono text-muted">
-                        {auction.date}
-                      </span>
+                      <span className="w-[72px] shrink-0 text-[11px] font-mono text-muted">{auction.date}</span>
 
-                      {/* House badge */}
                       <span
                         className="px-1.5 py-0.5 rounded text-[10px] font-semibold shrink-0"
                         style={auction.house === 'christies' ? CHR_STYLE : SOT_STYLE}
@@ -203,25 +235,31 @@ export default function CalendarPage() {
                         {auction.house === 'christies' ? 'CHR' : 'SOT'}
                       </span>
 
-                      {/* Title */}
                       <span className="flex-1 text-sm text-foreground group-hover:text-accent transition-colors min-w-0 truncate">
                         {auction.title}
                       </span>
 
-                      {/* Location */}
                       <span className="hidden md:flex items-center gap-1 text-[11px] text-muted shrink-0">
                         <LocationIcon />
                         {auction.location}
                       </span>
 
-                      {/* Online badge */}
                       {auction.kind === 'online' && (
                         <span className="hidden sm:inline text-[10px] text-muted border border-border rounded px-1.5 py-0.5 shrink-0 font-mono">
                           Online
                         </span>
                       )}
 
-                      {/* Arrow */}
+                      {viewMode === 'key' && (() => {
+                        const pill = statusPill(auction.status);
+                        if (!pill) return null;
+                        return (
+                          <span className={`hidden sm:inline text-[10px] border rounded px-1.5 py-0.5 shrink-0 font-mono ${pill.cls}`}>
+                            {pill.label}
+                          </span>
+                        );
+                      })()}
+
                       <ArrowIcon />
                     </a>
                   ))}
@@ -231,9 +269,10 @@ export default function CalendarPage() {
           </div>
         )}
 
-        {/* ── Footer note ── */}
         <p className="text-[10px] text-muted text-center pb-2 font-mono">
-          Data sourced from Christie&apos;s and Sotheby&apos;s official calendars · Fine art categories only
+          {viewMode === 'key'
+            ? 'Key evening list sourced from manual event schedule (2026)'
+            : 'Data sourced from Christie\'s and Sotheby\'s official calendars · Fine art categories only'}
         </p>
       </div>
     </div>

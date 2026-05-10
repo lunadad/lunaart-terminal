@@ -40,6 +40,8 @@
   --th-muted: #6b7280;
   --th-text-secondary: #9ca3af;
   --scrollbar-color: #2a2d3a;
+  --font-geist-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* ── Light theme (Claude-inspired warm tone) ── */
