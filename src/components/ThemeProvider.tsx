@@ -22,19 +22,45 @@ function applyTheme(theme: Theme) {
   document.documentElement.setAttribute('data-theme', theme);
 }
 
+function isTheme(value: string | null): value is Theme {
+  return value === 'dark' || value === 'light';
+}
+
+function getInitialTheme(): Theme {
+  if (typeof document === 'undefined') return 'dark';
+  const current = document.documentElement.getAttribute('data-theme');
+  return isTheme(current) ? current : 'dark';
+}
+
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    return (localStorage.getItem('artpan-theme') as Theme | null) ?? 'dark';
-  });
+  const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
-    applyTheme(theme);
-    localStorage.setItem('artpan-theme', theme);
-  }, [theme]);
+    const frame = window.requestAnimationFrame(() => {
+      try {
+        const saved = localStorage.getItem('artpan-theme');
+        const next = isTheme(saved) ? saved : getInitialTheme();
+        setTheme(next);
+        applyTheme(next);
+      } catch {
+        const next = getInitialTheme();
+        setTheme(next);
+        applyTheme(next);
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      try {
+        localStorage.setItem('artpan-theme', next);
+      } catch {}
+      return next;
+    });
   }, []);
 
   return (

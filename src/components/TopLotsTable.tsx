@@ -1,7 +1,6 @@
 'use client';
 
 import { LotWithDetails } from '@/lib/types';
-import { formatFullCurrency } from '@/lib/mock-data';
 
 interface Props {
   lots: LotWithDetails[];
@@ -20,7 +19,7 @@ export default function TopLotsTable({ lots }: Props) {
         <span className="text-[10px] text-muted font-mono">TOP LOTS BY VALUE</span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-xs">
+        <table className="w-full text-xs min-w-[620px]">
           <thead>
             <tr className="border-b border-border">
               <th className="text-left py-2 px-2 text-muted font-medium">#</th>
@@ -39,12 +38,21 @@ export default function TopLotsTable({ lots }: Props) {
               return (
                 <tr
                   key={lot.id}
-                  className="border-b border-border/50 hover:bg-surface-hover transition-colors cursor-pointer"
-                  onClick={() => window.open(lot.lotUrl, '_blank', 'noopener,noreferrer')}
+                  className="border-b border-border/50 hover:bg-surface-hover focus-within:bg-surface-hover transition-colors"
                 >
                   <td className="py-2.5 px-2 text-muted font-mono">{i + 1}</td>
                   <td className="py-2.5 px-2 text-foreground font-medium">{lot.artist.name}</td>
-                  <td className="py-2.5 px-2 text-text-secondary italic max-w-[200px] truncate">{lot.title}</td>
+                  <td className="py-2.5 px-2 text-text-secondary italic max-w-[200px]">
+                    <a
+                      href={lot.lotUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block truncate rounded-sm hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface"
+                      aria-label={`${lot.artist.name}, ${lot.title} lot page`}
+                    >
+                      {lot.title}
+                    </a>
+                  </td>
                   <td className="py-2.5 px-2">
                     <span
                       className="px-1.5 py-0.5 rounded text-[10px]"
@@ -56,7 +64,7 @@ export default function TopLotsTable({ lots }: Props) {
                     </span>
                   </td>
                   <td className="py-2.5 px-2 text-right text-green font-mono font-medium">
-                    {formatFullCurrency(lot.result.usdEquivalent || 0, 'USD')}
+                    ${lot.result.usdEquivalent?.toLocaleString()}
                   </td>
                   <td className={`py-2.5 px-2 text-right font-mono ${ratio > 0 ? 'text-green' : 'text-red'}`}>
                     {ratio > 0 ? '+' : ''}{ratio.toFixed(0)}%

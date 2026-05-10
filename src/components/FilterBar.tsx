@@ -17,7 +17,9 @@ function FilterGroup({ label, children }: { label: string; children: React.React
   return (
     <div className="space-y-1.5 min-w-0">
       <p className="text-[10px] text-muted uppercase tracking-widest">{label}</p>
-      <div className="flex gap-1 overflow-x-auto no-scrollbar">{children}</div>
+      <div className="scroll-fade">
+        <div className="flex gap-1 overflow-x-auto no-scrollbar pr-6">{children}</div>
+      </div>
     </div>
   );
 }
@@ -34,7 +36,7 @@ function Chip({
   return (
     <button
       onClick={onClick}
-      className={`px-2.5 py-1 rounded-lg text-xs transition-all whitespace-nowrap shrink-0 ${
+      className={`px-2.5 py-1 rounded-lg text-xs transition-all whitespace-nowrap shrink-0 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface ${
         active
           ? 'bg-accent/20 text-accent font-medium border border-accent/30'
           : 'bg-surface-hover text-text-secondary hover:text-foreground border border-transparent'

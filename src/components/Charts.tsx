@@ -12,20 +12,22 @@ const COLORS = {
   sothebys: '#8b9b00',
 };
 
-type TooltipPoint = {
-  dataKey: string;
-  color?: string;
-  name?: string;
+type TooltipPayload = {
+  dataKey?: string | number;
+  name?: string | number;
   value?: string | number;
+  color?: string;
 };
 
-type TooltipProps = {
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: {
   active?: boolean;
-  payload?: TooltipPoint[];
-  label?: string | number;
-};
-
-function CustomTooltip({ active, payload, label }: TooltipProps) {
+  payload?: TooltipPayload[];
+  label?: string;
+}) {
   if (!active || !payload) return null;
   return (
     <div className="bg-surface border border-border-light rounded-lg p-3 shadow-xl">
@@ -97,10 +99,14 @@ function TileContent({
 
   return (
     <div
-      className="relative h-full rounded-lg flex flex-col items-center justify-center transition-all duration-200 overflow-hidden select-none"
+      tabIndex={0}
+      className="relative h-full rounded-lg flex flex-col items-center justify-center transition-all duration-200 overflow-hidden select-none outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
       style={{ background: pal.bg, border: `1.5px solid ${pal.border}`, color: pal.fg }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+      aria-label={`${d.category}: sell-through ${d.sellThrough}%, estimate ${d.avgOverEstimate >= 0 ? '+' : ''}${d.avgOverEstimate}%, volume $${formatCurrency(d.totalVolume)}`}
     >
       {/* Category name — always visible */}
       <p className={`font-semibold truncate max-w-full px-2 ${isLarge ? 'text-sm' : 'text-[11px]'}`}>
@@ -127,8 +133,13 @@ function TileContent({
       ) : (
         <>
           <p className="text-base font-bold font-mono mt-0.5">{d.sellThrough}%</p>
+          <p className="text-[10px] font-mono opacity-70 mt-0.5">
+            {d.avgOverEstimate >= 0 ? '+' : ''}{d.avgOverEstimate}% est.
+          </p>
+          <p className="text-[10px] font-mono opacity-50">
+            ${formatCurrency(d.totalVolume)}
+          </p>
 
-          {/* Hover tooltip — slides up from bottom */}
           <div
             className={`absolute inset-0 rounded-lg flex flex-col items-center justify-center gap-0.5 backdrop-blur-sm transition-all duration-200 ${
               hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'

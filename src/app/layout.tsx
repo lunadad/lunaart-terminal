@@ -7,6 +7,17 @@ import ThemeProvider from "@/components/ThemeProvider";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
+const themeInitScript = `
+(() => {
+  try {
+    const saved = localStorage.getItem('artpan-theme');
+    if (saved === 'dark' || saved === 'light') {
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+  } catch {}
+})();
+`;
+
 export const metadata: Metadata = {
   title: "LunaArt Terminal",
   description: "Art Market Intelligence Platform",
@@ -18,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="ko" data-theme="dark" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
           <div className="flex h-screen overflow-hidden">
             <Sidebar />

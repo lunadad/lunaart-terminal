@@ -20,7 +20,7 @@ export default function LotCard({ lot }: Props) {
       href={lot.lotUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={`block bg-surface border rounded-xl p-4 transition-all hover:border-border-light hover:bg-surface-hover group ${
+      className={`block bg-surface border rounded-xl p-4 transition-all hover:border-border-light hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background group ${
         isRecord ? 'border-yellow/30' : isSurprise ? 'border-green/20' : 'border-border'
       }`}
     >
@@ -101,9 +101,9 @@ export default function LotCard({ lot }: Props) {
       </div>
 
       {/* Footer */}
-      <div className="mt-3 pt-2 border-t border-border flex items-center justify-between">
-        <span className="text-[10px] text-muted">{lot.saleEvent.name}</span>
-        <span className="text-[10px] text-muted">{lot.saleEvent.city} &middot; {lot.saleEvent.date}</span>
+      <div className="mt-3 pt-2 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+        <span className="text-[10px] text-muted min-w-0 truncate">{lot.saleEvent.name}</span>
+        <span className="text-[10px] text-muted shrink-0">{lot.saleEvent.city} &middot; {lot.saleEvent.date}</span>
       </div>
     </a>
   );

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTheme } from './ThemeProvider';
 
 const VERSION = 'v0.1.0';
@@ -73,6 +73,10 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
 
   // Crawl controls state
   const [scheduleTime, setScheduleTime] = useState(() =>
@@ -85,6 +89,13 @@ export default function Sidebar() {
     typeof window !== 'undefined' ? localStorage.getItem('lastCrawled') : null
   );
   const timeInputRef = useRef<HTMLInputElement>(null);
+
+  const closeMobileMenu = useCallback((restoreFocus = true) => {
+    setMobileOpen(false);
+    if (restoreFocus) {
+      window.setTimeout(() => menuButtonRef.current?.focus(), 0);
+    }
+  }, []);
 
   useEffect(() => {
     if (editingSchedule) timeInputRef.current?.focus();
@@ -105,12 +116,62 @@ export default function Sidebar() {
     setCrawling(false);
   }
 
-  // Close on escape
+  // Close mobile menu on route change
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setMobileOpen(false); };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    const frame = window.requestAnimationFrame(() => setMobileOpen(false));
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px)');
+    const syncMobile = () => setIsMobile(media.matches);
+    syncMobile();
+    media.addEventListener('change', syncMobile);
+    return () => media.removeEventListener('change', syncMobile);
   }, []);
+
+  useEffect(() => {
+    if (!drawerRef.current) return;
+    (drawerRef.current as HTMLElement & { inert: boolean }).inert = isMobile && !mobileOpen;
+  }, [isMobile, mobileOpen]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    window.setTimeout(() => closeButtonRef.current?.focus(), 0);
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!mobileOpen) return;
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeMobileMenu();
+        return;
+      }
+
+      if (e.key !== 'Tab' || !drawerRef.current) return;
+      const focusable = Array.from(
+        drawerRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [closeMobileMenu, mobileOpen]);
 
   const sidebarContent = (
     <>
@@ -121,14 +182,17 @@ export default function Sidebar() {
             <span className="text-white font-bold text-sm">LT</span>
           </div>
           <div>
-            <h1 className="text-sm font-bold tracking-wide text-foreground">LunaArt</h1>
+            <h1 id="mobile-sidebar-title" className="text-sm font-bold tracking-wide text-foreground">LunaArt</h1>
             <p className="text-[10px] text-muted tracking-widest uppercase">Terminal</p>
           </div>
         </div>
         {/* Mobile close button */}
         <button
-          onClick={() => setMobileOpen(false)}
-          className="md:hidden p-1 rounded-lg text-muted hover:text-foreground hover:bg-surface-hover transition-colors"
+          ref={closeButtonRef}
+          type="button"
+          aria-label="사이드바 닫기"
+          onClick={() => closeMobileMenu()}
+          className="md:hidden p-1 rounded-lg text-muted hover:text-foreground hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
         >
           <CloseIcon />
         </button>
@@ -142,8 +206,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface ${
                 isActive
                   ? 'bg-accent/15 text-accent font-medium'
                   : 'text-text-secondary hover:bg-surface-hover hover:text-foreground'
@@ -212,7 +275,9 @@ export default function Sidebar() {
       {/* Theme Toggle + Status */}
       <div className="p-4 border-t border-border space-y-3">
         <button
+          type="button"
           onClick={toggleTheme}
+          aria-label={`${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-background border border-border hover:border-border-light transition-all group"
         >
           <div className="relative w-10 h-5 rounded-full bg-surface-hover border border-border-light transition-colors shrink-0">
@@ -247,8 +312,13 @@ export default function Sidebar() {
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-surface border-b border-border px-4 py-3 flex items-center justify-between">
         <button
+          ref={menuButtonRef}
+          type="button"
           onClick={() => setMobileOpen(true)}
-          className="p-1.5 rounded-lg text-foreground hover:bg-surface-hover transition-colors"
+          aria-label="사이드바 열기"
+          aria-controls="mobile-sidebar"
+          aria-expanded={mobileOpen}
+          className="p-1.5 rounded-lg text-foreground hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
         >
           <HamburgerIcon />
         </button>
@@ -259,8 +329,10 @@ export default function Sidebar() {
           <span className="text-sm font-bold text-foreground">LunaArt</span>
         </div>
         <button
+          type="button"
           onClick={toggleTheme}
-          className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-surface-hover transition-colors"
+          aria-label={`${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`}
+          className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
         >
           {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
         </button>
@@ -270,12 +342,18 @@ export default function Sidebar() {
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
+          onClick={() => closeMobileMenu()}
         />
       )}
 
       {/* Sidebar — mobile: slide-over drawer, desktop: fixed */}
       <aside
+        id="mobile-sidebar"
+        ref={drawerRef}
+        role={mobileOpen ? 'dialog' : undefined}
+        aria-modal={mobileOpen ? true : undefined}
+        aria-labelledby="mobile-sidebar-title"
+        tabIndex={-1}
         className={`
           fixed md:relative z-50 md:z-auto
           w-[260px] md:w-[220px] h-full

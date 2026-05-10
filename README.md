@@ -1,62 +1,36 @@
-# LunaArt Terminal
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-LunaArt Terminal is a Next.js dashboard for tracking art auction activity across Christie’s and Sotheby’s. It combines a live-style Auction Feed, a Spotlight view for artist/lots analysis, and an Auction Calendar for upcoming sales.
+## Getting Started
 
-## What’s inside
-
-- **Auction Feed** — filter lots by time, house, medium, and price band
-- **Market Pulse** — quick summary of volume, sell-through, and estimate performance
-- **Spotlight** — rising artists, hot lots, liquidity, and volatility views with decision labels
-- **Auction Calendar** — grouped auction schedule by month, house, and sale type
-- **Source snapshot cards** — quick visibility into dataset coverage and freshness
-
-## Tech stack
-
-- Next.js 16
-- React 19
-- TypeScript
-- Tailwind CSS v4
-- Recharts
-- Static JSON data generated from auction sources
-
-## Local development
+First, run the development server:
 
 ```bash
-npm install
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Open http://localhost:3000 in your browser.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Production build
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-```bash
-npm run build
-npm start
-```
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Linting
+## Learn More
 
-```bash
-npm run lint
-```
+To learn more about Next.js, take a look at the following resources:
 
-## Data notes
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-The app uses curated auction data in `src/lib/christies-data.json` and `src/lib/sothebys-data.json`. The `scripts/fetch-christies.mjs` script can be used to refresh Christie’s data.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Project structure
+## Deploy on Vercel
 
-- `src/app/page.tsx` — Auction Feed dashboard
-- `src/app/spotlight/page.tsx` — Spotlight analytics dashboard
-- `src/app/calendar/page.tsx` — Auction Calendar
-- `src/components/` — reusable UI blocks
-- `src/lib/mock-data.ts` — merged data access and analytics helpers
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## Deployment
-
-The app is set up for GitHub Pages deployment via `.github/workflows/deploy.yml`.
-
-## Notes
-
-This project is optimized for quick scanning and decision support rather than archival research. The labels and summaries are opinionated shortcuts to help you decide what to inspect first.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
