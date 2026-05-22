@@ -1,74 +1,101 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
-} from 'recharts';
-import { getMonthlyVolume, getCategoryPerformance, formatCurrency } from '@/lib/mock-data';
-import { useTheme } from './ThemeProvider';
+import { allLots, auctionHouses, getCategoryPerformance, formatCurrency } from '@/lib/mock-data';
 
-const COLORS = {
-  christies: '#f97316',
-  sothebys: '#8b9b00',
+const MONTH_LABEL_FORMATTER = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' });
+
+const HOUSE_HEATMAP_PALETTE: Record<string, { bg: string; border: string; fg: string; marker: string }> = {
+  christies: { bg: '#FFF0DB', border: '#F5C36A', fg: '#6B4A00', marker: '#f97316' },
+  sothebys: { bg: '#EAF1C7', border: '#B6C53D', fg: '#384000', marker: '#8b9b00' },
 };
 
-type TooltipPayload = {
-  dataKey?: string | number;
-  name?: string | number;
-  value?: string | number;
-  color?: string;
-};
+function getCurrentMonthHouseVolume() {
+  const now = new Date();
+  const monthPrefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const monthLots = allLots.filter(l => l.result.saleDate?.startsWith(monthPrefix));
+  const totalVolume = monthLots
+    .filter(l => l.result.sold)
+    .reduce((sum, l) => sum + (l.result.usdEquivalent || 0), 0);
 
-function CustomTooltip({
-  active,
-  payload,
-  label,
-}: {
-  active?: boolean;
-  payload?: TooltipPayload[];
-  label?: string;
-}) {
-  if (!active || !payload) return null;
-  return (
-    <div className="bg-surface border border-border-light rounded-lg p-3 shadow-xl">
-      <p className="text-xs font-medium text-foreground mb-1">{label}</p>
-      {payload.map((p) => (
-        <p key={p.dataKey} className="text-xs" style={{ color: p.color }}>
-          {p.name}: ${p.value}M
-        </p>
-      ))}
-    </div>
-  );
+  return {
+    monthLabel: MONTH_LABEL_FORMATTER.format(now).toUpperCase(),
+    totalVolume,
+    houses: auctionHouses
+      .map((house) => {
+        const houseLots = monthLots.filter(l => l.auctionHouseId === house.id);
+        const soldLots = houseLots.filter(l => l.result.sold);
+        const volume = soldLots.reduce((sum, l) => sum + (l.result.usdEquivalent || 0), 0);
+
+        return {
+          id: house.id,
+          name: house.name,
+          volume,
+          soldLots: soldLots.length,
+          totalLots: houseLots.length,
+          share: totalVolume > 0 ? (volume / totalVolume) * 100 : 0,
+          sellThrough: houseLots.length > 0 ? (soldLots.length / houseLots.length) * 100 : 0,
+        };
+      })
+      .sort((a, b) => b.volume - a.volume),
+  };
 }
 
 export function MonthlyVolumeChart() {
-  const data = getMonthlyVolume();
-  const { theme } = useTheme();
-  const tickColor = theme === 'dark' ? '#6b7280' : '#8c8379';
-  const cursorFill = theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)';
+  const data = getCurrentMonthHouseVolume();
 
   return (
     <div className="bg-surface border border-border rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-foreground">경매사별 월간 거래액</h3>
-        <span className="text-[10px] text-muted font-mono">MONTHLY VOLUME ($M)</span>
+        <h3 className="text-sm font-semibold text-foreground">현재 월 경매사 매출</h3>
+        <span className="text-[10px] text-muted font-mono">{data.monthLabel}</span>
       </div>
-      <ResponsiveContainer width="100%" height={260}>
-        <BarChart data={data} barGap={4}>
-          <XAxis dataKey="month" tick={{ fill: tickColor, fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: tickColor, fontSize: 11 }} axisLine={false} tickLine={false} />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: cursorFill }} />
-          <Legend
-            formatter={(value: string) => (
-              <span className="text-xs text-text-secondary">
-                {value === 'christies' ? "Christie's" : "Sotheby's"}
-              </span>
-            )}
-          />
-          <Bar dataKey="christies" fill={COLORS.christies} radius={[4, 4, 0, 0]} />
-          <Bar dataKey="sothebys" fill={COLORS.sothebys} radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
+
+      <div className="flex gap-2" style={{ height: 260 }}>
+        {data.houses.map((house) => {
+          const palette = HOUSE_HEATMAP_PALETTE[house.id] || HOUSE_HEATMAP_PALETTE.christies;
+          const flexValue = Math.max(house.volume, data.totalVolume > 0 ? data.totalVolume * 0.08 : 1);
+
+          return (
+            <div
+              key={house.id}
+              className="relative rounded-lg border overflow-hidden flex flex-col justify-between p-4 min-w-[120px]"
+              style={{ flex: flexValue, background: palette.bg, borderColor: palette.border, color: palette.fg }}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold truncate">{house.name}</p>
+                <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: palette.marker }} />
+              </div>
+              <div>
+                <p className="text-2xl md:text-3xl font-bold font-mono tracking-normal">
+                  ${formatCurrency(house.volume)}
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div>
+                    <p className="text-[10px] opacity-55 uppercase">Share</p>
+                    <p className="text-sm font-bold font-mono">{house.share.toFixed(1)}%</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] opacity-55 uppercase">Sold</p>
+                    <p className="text-sm font-bold font-mono">{house.soldLots}/{house.totalLots}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="h-1.5 rounded-full bg-white/40 overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${Math.min(100, house.sellThrough)}%`, background: palette.marker }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-3 flex items-center justify-between gap-3 text-[10px] text-muted font-mono">
+        <span>TOTAL ${formatCurrency(data.totalVolume)}</span>
+        <span>{data.houses.map(h => `${h.name === "Christie's" ? 'CHR' : 'SOT'} ${h.share.toFixed(1)}%`).join(' / ')}</span>
+      </div>
     </div>
   );
 }
