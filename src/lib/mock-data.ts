@@ -135,7 +135,7 @@ export function getRisingArtists(): RisingArtist[] {
 }
 
 export function getMonthlyVolume() {
-  const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'];
+  const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
 
   // 이전 달은 업계 평균 기반 추정치
   return months.map((month) => {
@@ -150,7 +150,7 @@ export function getMonthlyVolume() {
     const sothebys = sold
       .filter(l => l.auctionHouseId === 'sothebys')
       .reduce((s, l) => s + (l.result.usdEquivalent || 0), 0) / 1_000_000;
-    const hasActualData = month === 'Mar' || month === 'Apr';
+    const hasActualData = month === 'Mar' || month === 'Apr' || month === 'May';
 
     return {
       month,
