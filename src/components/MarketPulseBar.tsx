@@ -5,9 +5,21 @@ import { formatCurrency } from '@/lib/mock-data';
 
 interface Props {
   pulse: MarketPulse;
+  houseBreakdown?: {
+    id: string;
+    name: string;
+    totalVolume: number;
+    soldLots: number;
+    totalLots: number;
+  }[];
 }
 
-export default function MarketPulseBar({ pulse }: Props) {
+const HOUSE_COLORS: Record<string, string> = {
+  christies: 'text-orange',
+  sothebys: 'text-accent',
+};
+
+export default function MarketPulseBar({ pulse, houseBreakdown = [] }: Props) {
   const metrics = [
     {
       label: '총 거래액',
@@ -51,6 +63,23 @@ export default function MarketPulseBar({ pulse }: Props) {
           </div>
         ))}
       </div>
+      {houseBreakdown.length > 0 && (
+        <div className="mt-4 pt-3 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {houseBreakdown.map((house) => (
+            <div key={house.id} className="flex items-center justify-between gap-3 rounded-lg bg-background border border-border px-3 py-2 min-w-0">
+              <div className="min-w-0">
+                <p className="text-[10px] text-muted uppercase tracking-wider truncate">{house.name}</p>
+                <p className={`text-sm md:text-base font-bold font-mono ${HOUSE_COLORS[house.id] || 'text-foreground'}`}>
+                  ${formatCurrency(house.totalVolume)}
+                </p>
+              </div>
+              <p className="text-[10px] md:text-xs text-text-secondary font-mono shrink-0">
+                {house.soldLots}/{house.totalLots} sold
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

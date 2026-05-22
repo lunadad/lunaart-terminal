@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { allLots, getMarketPulse, getRisingArtists } from '@/lib/mock-data';
+import { allLots, auctionHouses, getMarketPulse, getRisingArtists } from '@/lib/mock-data';
 import { TimeFilter, MediumFilter, PriceRange } from '@/lib/types';
 import MarketPulseBar from '@/components/MarketPulseBar';
 import FilterBar from '@/components/FilterBar';
@@ -56,6 +56,18 @@ export default function AuctionFeedPage() {
   }, [timeFilter, mediumFilter, priceRange, auctionHouse]);
 
   const pulse = useMemo(() => getMarketPulse(filteredLots), [filteredLots]);
+  const houseBreakdown = useMemo(() => auctionHouses.map((house) => {
+    const houseLots = filteredLots.filter(l => l.auctionHouseId === house.id);
+    const housePulse = getMarketPulse(houseLots);
+
+    return {
+      id: house.id,
+      name: house.name,
+      totalVolume: housePulse.totalVolume,
+      soldLots: housePulse.soldLots,
+      totalLots: housePulse.totalLots,
+    };
+  }), [filteredLots]);
   const risingArtists = getRisingArtists();
 
   return (
@@ -75,7 +87,7 @@ export default function AuctionFeedPage() {
       </div>
 
       {/* Market Pulse */}
-      <MarketPulseBar pulse={pulse} />
+      <MarketPulseBar pulse={pulse} houseBreakdown={houseBreakdown} />
 
       {/* Filters */}
       <FilterBar
