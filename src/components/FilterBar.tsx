@@ -15,8 +15,8 @@ interface Props {
 
 function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1.5 min-w-0">
-      <p className="text-[10px] text-muted uppercase tracking-widest">{label}</p>
+    <div className="min-w-0 space-y-2">
+      <p className="text-[10px] uppercase tracking-[0.18em] text-muted">{label}</p>
       <div className="scroll-fade">
         <div className="flex gap-1 overflow-x-auto no-scrollbar pr-6">{children}</div>
       </div>
@@ -36,10 +36,10 @@ function Chip({
   return (
     <button
       onClick={onClick}
-      className={`px-2.5 py-1 rounded-lg text-xs transition-all whitespace-nowrap shrink-0 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface ${
+      className={`shrink-0 whitespace-nowrap border px-3 py-1.5 text-xs transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background ${
         active
-          ? 'bg-accent/20 text-accent font-medium border border-accent/30'
-          : 'bg-surface-hover text-text-secondary hover:text-foreground border border-transparent'
+          ? 'border-foreground bg-foreground font-medium text-background'
+          : 'border-border bg-transparent text-text-secondary hover:border-foreground hover:text-foreground'
       }`}
     >
       {children}
@@ -58,7 +58,7 @@ export default function FilterBar({
   onAuctionHouseChange,
 }: Props) {
   return (
-    <div className="bg-surface border border-border rounded-xl p-3 md:p-4 grid grid-cols-2 md:flex md:flex-wrap gap-3 md:gap-4 lg:gap-6 md:items-end">
+    <div className="grid grid-cols-2 gap-5 md:flex md:flex-wrap md:items-end md:gap-8">
       <FilterGroup label="기간">
         <Chip active={timeFilter === '7d'} onClick={() => onTimeChange('7d')}>7일</Chip>
         <Chip active={timeFilter === '30d'} onClick={() => onTimeChange('30d')}>30일</Chip>

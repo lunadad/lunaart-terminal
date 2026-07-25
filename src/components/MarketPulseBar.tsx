@@ -48,15 +48,15 @@ export default function MarketPulseBar({ pulse, houseBreakdown = [] }: Props) {
   ];
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-3 md:p-5">
-      <div className="flex items-center gap-2 mb-3 md:mb-4">
+    <div className="border-y hairline">
+      <div className="flex items-center gap-2 border-b hairline py-3">
         <div className="w-2 h-2 rounded-full bg-green animate-pulse-dot" />
         <h2 className="text-xs md:text-sm font-semibold text-foreground tracking-wide">이달의 마켓 펄스</h2>
         <span className="text-[10px] md:text-xs text-muted ml-auto font-mono hidden sm:block">MARKET PULSE</span>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4">
         {metrics.map((m) => (
-          <div key={m.label} className="space-y-0.5 md:space-y-1 min-w-0">
+          <div key={m.label} className="min-w-0 space-y-1 border-b border-r hairline p-4 last:border-r-0 lg:border-b-0 md:p-6">
             <p className="text-[10px] md:text-xs text-muted uppercase tracking-wider">{m.label}</p>
             <p className={`text-lg md:text-xl lg:text-2xl font-bold ${m.color} font-mono truncate`}>{m.value}</p>
             <p className="text-[10px] md:text-xs text-text-secondary">{m.sub}</p>
@@ -64,9 +64,9 @@ export default function MarketPulseBar({ pulse, houseBreakdown = [] }: Props) {
         ))}
       </div>
       {houseBreakdown.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 border-t hairline sm:grid-cols-2">
           {houseBreakdown.map((house) => (
-            <div key={house.id} className="flex items-center justify-between gap-3 rounded-lg bg-background border border-border px-3 py-2 min-w-0">
+            <div key={house.id} className="flex min-w-0 items-center justify-between gap-3 border-b hairline px-4 py-3 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 md:px-6">
               <div className="min-w-0">
                 <p className="text-[10px] text-muted uppercase tracking-wider truncate">{house.name}</p>
                 <p className={`text-sm md:text-base font-bold font-mono ${HOUSE_COLORS[house.id] || 'text-foreground'}`}>

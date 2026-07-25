@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "crawl": "node scripts/fetch-latest-results.mjs",
     "start": "next start",
     "lint": "eslint"
   },

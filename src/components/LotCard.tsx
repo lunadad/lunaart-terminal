@@ -20,90 +20,69 @@ export default function LotCard({ lot }: Props) {
       href={lot.lotUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={`block bg-surface border rounded-xl p-4 transition-all hover:border-border-light hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background group ${
-        isRecord ? 'border-yellow/30' : isSurprise ? 'border-green/20' : 'border-border'
-      }`}
+      className="group block min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-background"
     >
-      {/* Header badges */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className={`px-2 py-0.5 rounded text-[10px] font-medium tracking-wide ${
-          lot.auctionHouse.name === "Christie's"
-            ? 'bg-red/10 text-red'
-            : 'bg-accent/10 text-accent'
-        }`}>
-          {lot.auctionHouse.name}
-        </span>
-        <span className="text-[10px] text-muted font-mono">LOT {lot.lotNumber}</span>
-        {isRecord && (
-          <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-yellow/10 text-yellow ml-auto">
-            RECORD
-          </span>
+      <div
+        className={`relative aspect-[4/3] overflow-hidden bg-surface border hairline ${
+          lot.auctionHouseId === 'christies'
+            ? 'bg-[linear-gradient(135deg,#f0a45d,#672d45)]'
+            : 'bg-[linear-gradient(135deg,#b7c65a,#21334b)]'
+        }`}
+      >
+        {lot.imageUrl && (
+          <div
+            className="absolute inset-0 bg-center bg-contain bg-no-repeat transition-transform duration-500 group-hover:scale-[1.03]"
+            style={{ backgroundImage: `url("${lot.imageUrl}")` }}
+            role="img"
+            aria-label={`${lot.artist.name}, ${lot.title}`}
+          />
         )}
-        {isSurprise && !isRecord && (
-          <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-green/10 text-green ml-auto">
-            SURPRISE
+        <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
+          <span className="bg-background/90 px-2.5 py-1 text-[10px] font-medium text-foreground backdrop-blur">
+            {lot.auctionHouse.name} · LOT {lot.lotNumber}
           </span>
-        )}
-        {!lot.result.sold && (
-          <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-red/10 text-red ml-auto">
-            UNSOLD
-          </span>
-        )}
-      </div>
-
-      {/* Artist & Title */}
-      <h3 className="text-sm font-semibold text-foreground leading-tight">{lot.artist.name}</h3>
-      <p className="text-xs text-text-secondary mt-0.5 italic">{lot.title}, {lot.year}</p>
-      <p className="text-[10px] text-muted mt-1">{lot.medium} &middot; {lot.dimensions}</p>
-
-      {/* Prices */}
-      <div className="mt-3 pt-3 border-t border-border space-y-1.5">
-        <div className="flex justify-between text-xs">
-          <span className="text-muted">Estimate</span>
-          <span className="text-text-secondary font-mono">
-            {formatFullCurrency(lot.estimateLow, lot.currency)} – {formatFullCurrency(lot.estimateHigh, lot.currency)}
-          </span>
+          {(isRecord || isSurprise || !lot.result.sold) && (
+            <span className={`px-2.5 py-1 text-[10px] font-semibold ${
+              !lot.result.sold
+                ? 'bg-red text-white'
+                : isRecord
+                  ? 'bg-yellow text-black'
+                  : 'bg-green text-black'
+            }`}>
+              {!lot.result.sold ? 'UNSOLD' : isRecord ? 'RECORD' : 'SURPRISE'}
+            </span>
+          )}
         </div>
-        {lot.result.sold ? (
-          <>
-            <div className="flex justify-between text-xs">
-              <span className="text-muted">Hammer</span>
-              <span className="text-foreground font-mono font-medium">
-                {formatFullCurrency(lot.result.hammerPrice!, lot.currency)}
-              </span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-muted">w/ Premium</span>
-              <span className="text-green font-mono font-bold">
-                {formatFullCurrency(lot.result.premiumPrice!, lot.currency)}
-              </span>
-            </div>
-            {lot.currency !== 'USD' && lot.result.usdEquivalent && (
-              <div className="flex justify-between text-xs">
-                <span className="text-muted">USD</span>
-                <span className="text-accent font-mono">
-                  ${lot.result.usdEquivalent.toLocaleString()}
-                </span>
-              </div>
-            )}
-            {estimateRatio !== null && (
-              <div className="flex justify-between text-xs">
-                <span className="text-muted">vs Estimate</span>
-                <span className={`font-mono font-medium ${estimateRatio > 0 ? 'text-green' : 'text-red'}`}>
-                  {estimateRatio > 0 ? '+' : ''}{estimateRatio.toFixed(0)}%
-                </span>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="text-xs text-red font-medium">Passed / Unsold</div>
-        )}
       </div>
 
-      {/* Footer */}
-      <div className="mt-3 pt-2 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-        <span className="text-[10px] text-muted min-w-0 truncate">{lot.saleEvent.name}</span>
-        <span className="text-[10px] text-muted shrink-0">{lot.saleEvent.city} &middot; {lot.saleEvent.date}</span>
+      <div className="pt-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-base font-semibold leading-tight text-foreground group-hover:underline underline-offset-4">
+              {lot.artist.name}
+            </h3>
+            <p className="mt-1 truncate text-sm italic text-text-secondary">
+              {lot.title}{lot.year ? `, ${lot.year}` : ''}
+            </p>
+          </div>
+          {estimateRatio !== null && (
+            <span className={`shrink-0 text-xs font-mono font-semibold ${estimateRatio >= 0 ? 'text-green' : 'text-red'}`}>
+              {estimateRatio > 0 ? '+' : ''}{estimateRatio.toFixed(0)}%
+            </span>
+          )}
+        </div>
+
+        {lot.result.sold ? (
+          <p className="mt-3 text-sm font-mono font-semibold text-foreground">
+            {formatFullCurrency(lot.result.premiumPrice!, lot.currency)}
+            <span className="ml-2 text-[10px] font-sans font-normal uppercase tracking-wider text-muted">incl. premium</span>
+          </p>
+        ) : (
+          <p className="mt-3 text-sm font-medium text-red">Passed / Unsold</p>
+        )}
+        <p className="mt-2 truncate text-[11px] text-muted">
+          {lot.saleEvent.name} · {lot.saleEvent.city} · {lot.saleEvent.date}
+        </p>
       </div>
     </a>
   );

@@ -44,22 +44,22 @@
 
 /* ── Light theme (Claude-inspired warm tone) ── */
 [data-theme="light"] {
-  --th-background: #f5f1eb;
-  --th-foreground: #1a1a1a;
+  --th-background: #f7f7f5;
+  --th-foreground: #111111;
   --th-surface: #ffffff;
-  --th-surface-hover: #f0ece5;
-  --th-border: #e0dbd2;
-  --th-border-light: #d4cec4;
-  --th-accent: #c96442;
-  --th-accent-dim: #a8503a;
+  --th-surface-hover: #f1f1ee;
+  --th-border: #deded9;
+  --th-border-light: #bdbdb6;
+  --th-accent: #3f52e3;
+  --th-accent-dim: #2f3fb5;
   --th-green: #1a8d5f;
   --th-red: #c93b3b;
   --th-orange: #c27a1a;
   --th-yellow: #a68b1a;
   --th-purple: #7c3aed;
-  --th-muted: #8c8379;
-  --th-text-secondary: #6b6259;
-  --scrollbar-color: #d4cec4;
+  --th-muted: #777772;
+  --th-text-secondary: #4e4e49;
+  --scrollbar-color: #c7c7c0;
 }
 
 * {
@@ -72,6 +72,22 @@ body {
   color: var(--th-foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: var(--th-accent);
+  color: white;
+}
+
+.editorial-display {
+  font-size: clamp(2.6rem, 6vw, 6.8rem);
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+  font-weight: 500;
+}
+
+.hairline {
+  border-color: color-mix(in srgb, var(--th-foreground) 18%, transparent);
 }
 
 /* Hide scrollbar but allow scroll */

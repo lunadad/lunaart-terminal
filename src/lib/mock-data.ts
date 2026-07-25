@@ -55,6 +55,7 @@ function mapRawLot(raw: any): LotWithDetails {
     estimateHigh: raw.estimateHigh,
     currency: raw.currency,
     lotUrl,
+    imageUrl: raw.imageUrl,
   };
 
   const result: AuctionResult = {

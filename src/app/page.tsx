@@ -1,63 +1,76 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { allLots, auctionHouses, getMarketPulse, getRisingArtists } from '@/lib/mock-data';
-import { TimeFilter, MediumFilter, PriceRange } from '@/lib/types';
+import { useMemo, useState } from 'react';
+import { allLots, auctionHouses, formatCurrency, getMarketPulse, getRisingArtists } from '@/lib/mock-data';
+import { MediumFilter, PriceRange, TimeFilter } from '@/lib/types';
 import MarketPulseBar from '@/components/MarketPulseBar';
 import FilterBar from '@/components/FilterBar';
 import LotCard from '@/components/LotCard';
 import TopLotsTable from '@/components/TopLotsTable';
 import SpotlightArtists from '@/components/SpotlightArtists';
-import { MonthlyVolumeChart, CategoryHeatmap } from '@/components/Charts';
+import { CategoryHeatmap, MonthlyVolumeChart } from '@/components/Charts';
+
+const SearchIcon = () => (
+  <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" />
+  </svg>
+);
 
 export default function AuctionFeedPage() {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('30d');
   const [mediumFilter, setMediumFilter] = useState<MediumFilter>('all');
   const [priceRange, setPriceRange] = useState<PriceRange>('all');
   const [auctionHouse, setAuctionHouse] = useState('all');
+  const [query, setQuery] = useState('');
 
   const filteredLots = useMemo(() => {
-    let lots = [...allLots];
-
     const now = new Date();
     const days = timeFilter === '7d' ? 7 : timeFilter === '30d' ? 30 : 90;
     const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-    lots = lots.filter(l => new Date(l.saleEvent.date) >= cutoff);
+    const normalizedQuery = query.trim().toLocaleLowerCase();
 
-    if (mediumFilter !== 'all') {
-      const map: Record<string, string> = {
-        painting: 'Painting',
-        sculpture: 'Sculpture',
-        photography: 'Photography',
-        prints: 'Prints',
-        nft: 'NFT',
-      };
-      lots = lots.filter(l => l.medium === map[mediumFilter]);
-    }
+    return allLots.filter((lot) => {
+      if (new Date(lot.saleEvent.date) < cutoff) return false;
+      if (auctionHouse !== 'all' && lot.auctionHouseId !== auctionHouse) return false;
 
-    if (priceRange !== 'all') {
-      lots = lots.filter(l => {
-        const price = l.result.usdEquivalent || l.estimateHigh;
-        switch (priceRange) {
-          case 'under50k': return price < 50000;
-          case '50k-500k': return price >= 50000 && price < 500000;
-          case '500k-5m': return price >= 500000 && price < 5000000;
-          case 'over5m': return price >= 5000000;
-          default: return true;
-        }
-      });
-    }
+      if (mediumFilter !== 'all') {
+        const mediumMap: Record<string, string> = {
+          painting: 'Painting',
+          sculpture: 'Sculpture',
+          photography: 'Photography',
+          prints: 'Prints',
+          nft: 'NFT',
+        };
+        if (lot.medium !== mediumMap[mediumFilter]) return false;
+      }
 
-    if (auctionHouse !== 'all') {
-      lots = lots.filter(l => l.auctionHouseId === auctionHouse);
-    }
+      if (priceRange !== 'all') {
+        const price = lot.result.usdEquivalent || lot.estimateHigh;
+        if (priceRange === 'under50k' && price >= 50_000) return false;
+        if (priceRange === '50k-500k' && (price < 50_000 || price >= 500_000)) return false;
+        if (priceRange === '500k-5m' && (price < 500_000 || price >= 5_000_000)) return false;
+        if (priceRange === 'over5m' && price < 5_000_000) return false;
+      }
 
-    return lots;
-  }, [timeFilter, mediumFilter, priceRange, auctionHouse]);
+      if (normalizedQuery) {
+        const haystack = [
+          lot.artist.name,
+          lot.title,
+          lot.saleEvent.name,
+          lot.saleEvent.city,
+          lot.medium,
+          lot.auctionHouse.name,
+        ].join(' ').toLocaleLowerCase();
+        if (!haystack.includes(normalizedQuery)) return false;
+      }
+
+      return true;
+    });
+  }, [auctionHouse, mediumFilter, priceRange, query, timeFilter]);
 
   const pulse = useMemo(() => getMarketPulse(filteredLots), [filteredLots]);
   const houseBreakdown = useMemo(() => auctionHouses.map((house) => {
-    const houseLots = filteredLots.filter(l => l.auctionHouseId === house.id);
+    const houseLots = filteredLots.filter(lot => lot.auctionHouseId === house.id);
     const housePulse = getMarketPulse(houseLots);
 
     return {
@@ -68,69 +81,147 @@ export default function AuctionFeedPage() {
       totalLots: housePulse.totalLots,
     };
   }), [filteredLots]);
+
+  const topLots = useMemo(
+    () => filteredLots
+      .filter(lot => lot.result.sold)
+      .sort((a, b) => (b.result.usdEquivalent || 0) - (a.result.usdEquivalent || 0)),
+    [filteredLots],
+  );
+  const latestDate = allLots[0]?.saleEvent.date || '—';
   const risingArtists = getRisingArtists();
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-[1400px]">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="min-w-0">
-          <h1 className="text-lg md:text-xl font-bold text-foreground">Auction Feed</h1>
-          <p className="text-xs md:text-sm text-muted mt-0.5">Christie&apos;s &middot; Sotheby&apos;s real-time results</p>
+    <div className="mx-auto max-w-[1600px] px-4 pb-16 md:px-8 lg:px-12">
+      <header className="border-b hairline pb-8 pt-8 md:pb-12 md:pt-12">
+        <div className="mb-10 flex items-center justify-between gap-4 text-[10px] font-mono uppercase tracking-[0.2em] text-muted">
+          <span>Live auction intelligence</span>
+          <span>Data through {latestDate}</span>
         </div>
-        <div className="text-right shrink-0">
-          <p className="text-[10px] md:text-xs text-muted font-mono">
-            {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-          </p>
-          <p className="text-[10px] md:text-xs text-text-secondary">{filteredLots.length} lots</p>
+
+        <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-end">
+          <div>
+            <h1 className="editorial-display max-w-5xl text-foreground">
+              The art market,
+              <br />
+              made legible.
+            </h1>
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-text-secondary md:text-lg">
+              Christie&apos;s와 Sotheby&apos;s의 최신 낙찰 결과를 한곳에서 비교하고,
+              가격 흐름과 작가 모멘텀을 빠르게 읽어보세요.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 border-y hairline">
+            <div className="border-r hairline py-5 pr-5">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted">Tracked lots</p>
+              <p className="mt-2 text-3xl font-medium tracking-tight text-foreground">{filteredLots.length}</p>
+            </div>
+            <div className="py-5 pl-5">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted">Volume</p>
+              <p className="mt-2 text-3xl font-medium tracking-tight text-foreground">${formatCurrency(pulse.totalVolume)}</p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Market Pulse */}
-      <MarketPulseBar pulse={pulse} houseBreakdown={houseBreakdown} />
+        <label className="mt-10 flex items-center gap-3 border-b-2 border-foreground py-3 text-muted transition-colors focus-within:border-accent focus-within:text-accent md:max-w-3xl">
+          <SearchIcon />
+          <span className="sr-only">작가, 작품 또는 경매 검색</span>
+          <input
+            type="search"
+            value={query}
+            onChange={event => setQuery(event.target.value)}
+            placeholder="Search artists, works, auctions, cities…"
+            className="w-full bg-transparent text-base text-foreground outline-none placeholder:text-muted md:text-lg"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className="text-xs uppercase tracking-wider text-muted hover:text-foreground"
+            >
+              Clear
+            </button>
+          )}
+        </label>
+      </header>
 
-      {/* Filters */}
-      <FilterBar
-        timeFilter={timeFilter}
-        mediumFilter={mediumFilter}
-        priceRange={priceRange}
-        auctionHouse={auctionHouse}
-        onTimeChange={setTimeFilter}
-        onMediumChange={setMediumFilter}
-        onPriceChange={setPriceRange}
-        onAuctionHouseChange={setAuctionHouse}
-      />
+      <section className="border-b hairline py-6">
+        <FilterBar
+          timeFilter={timeFilter}
+          mediumFilter={mediumFilter}
+          priceRange={priceRange}
+          auctionHouse={auctionHouse}
+          onTimeChange={setTimeFilter}
+          onMediumChange={setMediumFilter}
+          onPriceChange={setPriceRange}
+          onAuctionHouseChange={setAuctionHouse}
+        />
+      </section>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <section className="py-10 md:py-14">
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted">Market overview</p>
+            <h2 className="mt-2 text-2xl font-medium tracking-tight text-foreground md:text-3xl">What the latest sales are saying</h2>
+          </div>
+          <p className="hidden text-right text-xs text-muted md:block">Filtered in real time</p>
+        </div>
+        <MarketPulseBar pulse={pulse} houseBreakdown={houseBreakdown} />
+      </section>
+
+      <section className="border-t hairline py-10 md:py-14">
+        <div className="mb-7 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted">At auction</p>
+            <h2 className="mt-2 text-2xl font-medium tracking-tight text-foreground md:text-3xl">Recent results</h2>
+          </div>
+          <p className="text-xs text-muted">{filteredLots.length} lots</p>
+        </div>
+
+        {filteredLots.length > 0 ? (
+          <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            {filteredLots.slice(0, 24).map(lot => <LotCard key={lot.id} lot={lot} />)}
+          </div>
+        ) : (
+          <div className="border-y hairline py-20 text-center">
+            <p className="text-xl text-foreground">조건에 맞는 낙찰 결과가 없습니다.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                setTimeFilter('90d');
+                setMediumFilter('all');
+                setPriceRange('all');
+                setAuctionHouse('all');
+              }}
+              className="mt-5 border-b border-foreground pb-1 text-sm text-foreground"
+            >
+              모든 필터 초기화
+            </button>
+          </div>
+        )}
+      </section>
+
+      {topLots.length > 0 && (
+        <section className="border-t hairline py-10 md:py-14">
+          <TopLotsTable lots={filteredLots} />
+        </section>
+      )}
+
+      <section className="grid grid-cols-1 gap-6 border-t hairline py-10 md:py-14 xl:grid-cols-2">
         <MonthlyVolumeChart />
         <CategoryHeatmap />
-      </div>
+      </section>
 
-      {/* Spotlight Artists */}
-      <SpotlightArtists artists={risingArtists} />
+      <section className="border-t hairline py-10 md:py-14">
+        <SpotlightArtists artists={risingArtists} />
+      </section>
 
-      {/* Top Lots Table */}
-      <TopLotsTable lots={filteredLots} />
-
-      {/* Lot Cards Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-foreground">최근 낙찰 결과</h2>
-          <span className="text-[10px] text-muted font-mono">RECENT RESULTS</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredLots.slice(0, 30).map(lot => (
-            <LotCard key={lot.id} lot={lot} />
-          ))}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="text-center py-8 border-t border-border">
-        <p className="text-xs text-muted">레코드 세일 &middot; 서프라이즈 로트 &middot; 유찰 주의</p>
-        <p className="text-[10px] text-muted/50 mt-1">LunaArt Terminal &copy; 2026 &middot; Data for informational purposes only</p>
-      </div>
+      <footer className="flex flex-col gap-3 border-t hairline py-8 text-[10px] uppercase tracking-[0.15em] text-muted sm:flex-row sm:items-center sm:justify-between">
+        <span>LunaArt Terminal © 2026</span>
+        <span>Results for market intelligence only</span>
+      </footer>
     </div>
   );
 }

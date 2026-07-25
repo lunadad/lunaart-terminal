@@ -2,90 +2,45 @@ import { readFileSync, writeFileSync } from 'fs';
 
 const CHRISTIES_SALES = [
   {
-    name: 'Masterpieces: The Private Collection of S.I. Newhouse',
-    date: '2026-05-18',
-    city: 'New York',
-    category: 'Modern',
-    currency: 'USD',
-    url: 'https://www.christies.com/en/auction/masterpieces-the-private-collection-of-s-i-newhouse-31380/',
-  },
-  {
-    name: '20th Century Evening Sale',
-    date: '2026-05-18',
-    city: 'New York',
-    category: 'Modern',
-    currency: 'USD',
-    url: 'https://www.christies.com/en/auction/20th-century-evening-sale-31034/',
-  },
-  {
-    name: 'Impressionist and Modern Works on Paper Sale',
-    date: '2026-05-19',
-    city: 'New York',
-    category: 'Modern',
-    currency: 'USD',
-    url: 'https://www.christies.com/en/auction/impressionist-and-modern-works-on-paper-sale-31000/',
-  },
-  {
-    name: 'Impressionist and Modern Art Day Sale',
-    date: '2026-05-19',
-    city: 'New York',
-    category: 'Modern',
-    currency: 'USD',
-    url: 'https://www.christies.com/en/auction/impressionist-and-modern-art-day-sale-31001/',
-  },
-  {
-    name: 'Defined Space: The Collection of Henry S. McNeil, Jr.',
-    date: '2026-05-20',
-    city: 'New York',
+    key: 'jun-live',
+    name: 'Post-War to Present',
+    date: '2026-06-25',
+    city: 'London',
     category: 'Contemporary',
-    currency: 'USD',
-    url: 'https://www.christies.com/en/auction/defined-space-the-collection-of-henry-s-mcneil-jr-31355/',
+    currency: 'GBP',
+    url: 'https://www.christies.com/en/auction/post-war-to-present-24440-cks/',
   },
   {
-    name: "Marian's Richters & 21st Century Evening Sale",
-    date: '2026-05-20',
-    city: 'New York',
+    key: 'jul-online',
+    name: 'Post-War to Present: Online',
+    date: '2026-07-02',
+    city: 'London',
     category: 'Contemporary',
-    currency: 'USD',
-    url: 'https://www.christies.com/en/auction/marian-s-richters-21st-century-evening-sale-31140/',
-  },
-  {
-    name: 'Post-War and Contemporary Art Day Sale',
-    date: '2026-05-21',
-    city: 'New York',
-    category: 'Contemporary',
-    currency: 'USD',
-    url: 'https://www.christies.com/en/auction/post-war-and-contemporary-art-day-sale-31036/',
+    currency: 'GBP',
+    url: 'https://www.christies.com/en/auction/post-war-to-present-online-24577-cks/',
   },
 ];
 
 const SOTHEBYS_SALES = [
   {
-    name: 'Robert Mnuchin: Collector at Heart Evening Auction',
-    url: 'https://www.sothebys.com/en/buy/auction/2026/robert-mnuchin-collector-at-heart-evening-auction',
+    name: 'Masterpieces from the Lewis Collection',
+    url: 'https://www.sothebys.com/en/buy/auction/2026/masterpieces-from-the-lewis-collection-l26900?lotFilter=AllLots',
   },
   {
-    name: 'The Now & Contemporary Evening Auction',
-    url: 'https://www.sothebys.com/en/buy/auction/2026/the-now-contemporary-evening-auction',
+    name: 'Modern & Contemporary Evening Auction',
+    url: 'https://www.sothebys.com/en/buy/auction/2026/modern-contemporary-evening-auction-l26006?lotFilter=AllLots',
   },
   {
     name: 'Contemporary Day Auction',
-    url: 'https://www.sothebys.com/en/buy/auction/2026/contemporary-day-auction-2',
+    url: 'https://www.sothebys.com/en/buy/auction/2026/contemporary-day-auction-l26017?lotFilter=AllLots',
   },
   {
-    name: 'Modern Evening Auction',
-    url: 'https://www.sothebys.com/en/buy/auction/2026/modern-evening-auction',
-  },
-  {
-    name: 'A New Vista: The David and Shoshanna Wingate Collection Day Auction',
-    url: 'https://www.sothebys.com/en/buy/auction/2026/a-new-vista-the-david-and-shoshanna-wingate-collection-day-auction',
-  },
-  {
-    name: 'Modern Day Auction',
-    url: 'https://www.sothebys.com/en/buy/auction/2026/modern-day-auction',
+    name: 'Modern Day Auction including Masterpieces from the Lewis Collection',
+    url: 'https://www.sothebys.com/en/buy/auction/2026/modern-day-auction-l26007?lotFilter=AllLots',
   },
 ];
 
+const DATASET_PREFIX = 'chr-summer-2026-';
 const FX_TO_USD = { EUR: 1.08, GBP: 1.27, USD: 1, HKD: 0.128 };
 const HEADERS = {
   Accept: 'application/json,text/html;q=0.9,*/*;q=0.8',
@@ -204,43 +159,51 @@ function getBrowseUrl(url, page) {
 }
 
 function extractChristiesLotsComponent(html) {
-  const match = html.match(/window\.chrComponents\.lots\s*=\s*(\{[\s\S]*?\});\s*<\/script>/);
-  if (!match) throw new Error('missing Christies lots component');
-  return JSON.parse(match[1]);
+  const legacy = html.match(/window\.chrComponents\.lots\s*=\s*(\{[\s\S]*?\});\s*<\/script>/);
+  if (legacy) return JSON.parse(legacy[1]);
+
+  const current = html.match(/window\.chrComponents\s*=\s*(\{[\s\S]*?\});\r?\n<\/script>/);
+  if (current) return JSON.parse(current[1]).lots;
+
+  throw new Error('missing Christies lots component');
 }
 
 async function fetchChristiesLots(sale) {
-  let latest = null;
-  let previousCount = 0;
+  let meta = null;
+  let total = 0;
+  const lotsById = new Map();
 
   for (let page = 1; page <= 10; page += 1) {
     const html = await fetchText(getBrowseUrl(sale.url, page));
     const component = extractChristiesLotsComponent(html);
     const lots = component.data?.lots || [];
-    const total = Number(component.data?.total_hits_filtered || lots.length);
+    total = Number(component.data?.total_hits_filtered || lots.length);
     const params = component.data?.lot_search_api_endpoint?.parameters || {};
 
-    latest = {
-      meta: {
+    if (!meta) {
+      meta = {
         saleId: params.saleid || String(sale.url.match(/-(\d+)(?:-[a-z]+)?\/?$/i)?.[1] || page),
         saleNumber: params.salenumber || '',
         saleRoomCode: params.saleroomcode || '',
-      },
-      lots,
-      total,
-    };
+      };
+    }
 
-    if (lots.length >= total || lots.length === previousCount) break;
-    previousCount = lots.length;
+    const before = lotsById.size;
+    for (const lot of lots) {
+      lotsById.set(String(lot.object_id || lot.lot_id_txt), lot);
+    }
+
+    if (lotsById.size >= total || lotsById.size === before) break;
   }
 
-  if (!latest) throw new Error('no lots loaded');
-  return latest;
+  if (!meta || lotsById.size === 0) throw new Error('no lots loaded');
+  return { meta, lots: [...lotsById.values()], total };
 }
 
 function isChristiesSaleComplete(lots) {
   if (lots.length === 0) return false;
   if (lots.every(lot => lot.is_auction_over)) return true;
+  if (lots.every(lot => lot.end_date && new Date(lot.end_date).getTime() < Date.now())) return true;
   return lots.every(lot => Number(lot.price_realised || 0) > 0 || lot.lot_withdrawn);
 }
 
@@ -254,13 +217,14 @@ function mapChristiesLot(raw, sale, meta, resolveArtist, sequence) {
   const artistId = resolveArtist(artistInfo, sale.category);
   const lotNumber = Number.parseInt(String(raw.lot_id_txt || sequence), 10) || sequence;
   const lotKey = String(raw.lot_id_txt || raw.object_id || sequence).replace(/[^a-zA-Z0-9-]/g, '-');
-  const lotId = `chr-may-${meta.saleId}-${lotKey}`;
+  const saleEventId = `${DATASET_PREFIX}${sale.key}-${meta.saleId}`;
+  const lotId = `${saleEventId}-${lotKey}`;
   const sold = realised > 0;
   const usdEquivalent = sold ? Math.round(realised * (FX_TO_USD[sale.currency] || 1)) : null;
 
   return {
     id: lotId,
-    saleEventId: `chr-may-${meta.saleId}`,
+    saleEventId,
     auctionHouseId: 'christies',
     artistId,
     lotNumber,
@@ -271,7 +235,10 @@ function mapChristiesLot(raw, sale, meta, resolveArtist, sequence) {
     estimateLow,
     estimateHigh,
     currency: sale.currency,
-    lotUrl: raw.url || `https://www.christies.com/en/lot/lot-${raw.object_id}`,
+    lotUrl: raw.url
+      ? new URL(raw.url, 'https://www.christies.com').href
+      : `https://www.christies.com/en/lot/lot-${raw.object_id}`,
+    imageUrl: raw.image?.image_desktop_src || raw.image?.image_src || undefined,
     result: {
       id: `res-${lotId}`,
       lotId,
@@ -323,8 +290,8 @@ async function auditSothebysResults() {
 async function updateChristies() {
   const path = './src/lib/christies-data.json';
   const data = readJson(path);
-  data.saleEvents = data.saleEvents.filter(event => !String(event.id).startsWith('chr-may-'));
-  data.lots = data.lots.filter(lot => !String(lot.id).startsWith('chr-may-'));
+  data.saleEvents = data.saleEvents.filter(event => !String(event.id).startsWith(DATASET_PREFIX));
+  data.lots = data.lots.filter(lot => !String(lot.id).startsWith(DATASET_PREFIX));
   const resolveArtist = buildArtistResolver(data, 'a');
 
   let sequence = data.lots.length + 1;
@@ -345,7 +312,7 @@ async function updateChristies() {
       }
 
       data.saleEvents.push({
-        id: `chr-may-${meta.saleId}`,
+        id: `${DATASET_PREFIX}${sale.key}-${meta.saleId}`,
         auctionHouseId: 'christies',
         name: sale.name,
         city: sale.city,
@@ -368,12 +335,12 @@ async function updateChristies() {
   if (savedSales > 0) {
     writeFileSync(path, `${JSON.stringify(data, null, 2)}\n`);
   } else {
-    console.log('No Christies May sales saved; existing data file left unchanged');
+    console.log('No current Christies sales saved; existing data file left unchanged');
   }
 
   return {
-    lots: savedSales > 0 ? data.lots.filter(lot => String(lot.id).startsWith('chr-may-')).length : 0,
-    sold: savedSales > 0 ? data.lots.filter(lot => String(lot.id).startsWith('chr-may-') && lot.result.sold).length : 0,
+    lots: savedSales > 0 ? data.lots.filter(lot => String(lot.id).startsWith(DATASET_PREFIX)).length : 0,
+    sold: savedSales > 0 ? data.lots.filter(lot => String(lot.id).startsWith(DATASET_PREFIX) && lot.result.sold).length : 0,
     skipped,
   };
 }
@@ -381,10 +348,10 @@ async function updateChristies() {
 const christies = await updateChristies();
 const sothebys = await auditSothebysResults();
 
-console.log('\nMay result refresh complete');
-console.log(`Christie's May lots saved: ${christies.lots} (${christies.sold} sold/resulted)`);
+console.log('\nLatest result refresh complete');
+console.log(`Christie's current lots saved: ${christies.lots} (${christies.sold} sold/resulted)`);
 for (const skipped of christies.skipped) {
   const reason = skipped.error || `${skipped.sold}/${skipped.lots} result prices visible`;
   console.log(`Christie's skipped: ${skipped.name} (${reason})`);
 }
-console.log(`Sotheby's May audit: ${sothebys.visible} visible result records, ${sothebys.hidden} hidden-result records, ${sothebys.failed} failed pages`);
+console.log(`Sotheby's current audit: ${sothebys.visible} visible result records, ${sothebys.hidden} hidden-result records, ${sothebys.failed} failed pages`);

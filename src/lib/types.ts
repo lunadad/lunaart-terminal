@@ -38,6 +38,7 @@ export interface Lot {
   estimateHigh: number;
   currency: string;
   lotUrl: string;
+  imageUrl?: string;
 }
 
 export interface AuctionResult {
