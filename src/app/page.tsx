@@ -170,16 +170,16 @@ export default function AuctionFeedPage() {
         <MarketPulseBar pulse={pulse} houseBreakdown={houseBreakdown} />
       </section>
 
+      <section className="grid grid-cols-1 gap-6 border-t hairline py-10 md:py-14 xl:grid-cols-2">
+        <MonthlyVolumeChart />
+        <CategoryHeatmap />
+      </section>
+
       {topLots.length > 0 && (
         <section className="border-t hairline py-10 md:py-14">
           <TopLotsTable lots={filteredLots} />
         </section>
       )}
-
-      <section className="grid grid-cols-1 gap-6 border-t hairline py-10 md:py-14 xl:grid-cols-2">
-        <MonthlyVolumeChart />
-        <CategoryHeatmap />
-      </section>
 
       <section className="border-t hairline py-10 md:py-14">
         <SpotlightArtists artists={risingArtists} />

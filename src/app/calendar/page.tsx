@@ -22,6 +22,8 @@ const MONTH_LABELS: Record<string, string> = {
   '2026-03': 'March 2026',
   '2026-04': 'April 2026',
   '2026-05': 'May 2026',
+  '2026-06': 'June 2026',
+  '2026-07': 'July 2026',
 };
 
 const auctions: Auction[] = [
@@ -457,6 +459,66 @@ const auctions: Auction[] = [
     href: "https://www.sothebys.com/en/buy/auction/2026/modern-and-contemporary-art-miol65",
     kind: 'live',
   },
+
+  // ── June 2026 · Christie's ──────────────────────────────────────────
+  {
+    house: 'christies',
+    title: "Post-War to Present",
+    date: "25 Jun",
+    dateSort: "2026-06-25c",
+    location: "London",
+    href: "https://www.christies.com/en/auction/post-war-to-present-24440-cks/",
+    kind: 'live',
+  },
+
+  // ── June 2026 · Sotheby's ───────────────────────────────────────────
+  {
+    house: 'sothebys',
+    title: "Masterpieces from the Lewis Collection",
+    date: "24 Jun",
+    dateSort: "2026-06-24a",
+    location: "London",
+    href: "https://www.sothebys.com/en/buy/auction/2026/masterpieces-from-the-lewis-collection-l26900?lotFilter=AllLots",
+    kind: 'live',
+  },
+  {
+    house: 'sothebys',
+    title: "Modern & Contemporary Evening Auction",
+    date: "24 Jun",
+    dateSort: "2026-06-24b",
+    location: "London",
+    href: "https://www.sothebys.com/en/buy/auction/2026/modern-contemporary-evening-auction-l26006?lotFilter=AllLots",
+    kind: 'live',
+  },
+  {
+    house: 'sothebys',
+    title: "Contemporary Day Auction",
+    date: "25 Jun",
+    dateSort: "2026-06-25a",
+    location: "London",
+    href: "https://www.sothebys.com/en/buy/auction/2026/contemporary-day-auction-l26017?lotFilter=AllLots",
+    kind: 'live',
+  },
+  {
+    house: 'sothebys',
+    title: "Modern Day Auction including Masterpieces from the Lewis Collection",
+    date: "25 Jun",
+    dateSort: "2026-06-25b",
+    location: "London",
+    href: "https://www.sothebys.com/en/buy/auction/2026/modern-day-auction-l26007?lotFilter=AllLots",
+    kind: 'live',
+  },
+
+  // ── July 2026 · Christie's ──────────────────────────────────────────
+  {
+    house: 'christies',
+    title: "Post-War to Present: Online",
+    date: "2 Jul",
+    dateSort: "2026-07-02",
+    location: "London",
+    href: "https://www.christies.com/en/auction/post-war-to-present-online-24577-cks/",
+    kind: 'online',
+  },
 ];
 
 function groupByMonth(list: Auction[]): [string, Auction[]][] {
@@ -466,7 +528,7 @@ function groupByMonth(list: Auction[]): [string, Auction[]][] {
     if (!groups[key]) groups[key] = [];
     groups[key].push(a);
   });
-  return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+  return Object.entries(groups).sort(([a], [b]) => b.localeCompare(a));
 }
 
 function ArrowIcon() {
@@ -497,7 +559,7 @@ export default function CalendarPage() {
         if (activeKind !== 'all' && a.kind !== activeKind) return false;
         return true;
       })
-      .sort((a, b) => a.dateSort.localeCompare(b.dateSort));
+      .sort((a, b) => b.dateSort.localeCompare(a.dateSort));
   }, [activeHouse, activeKind]);
 
   const grouped = groupByMonth(filtered);
@@ -514,7 +576,7 @@ export default function CalendarPage() {
           <div>
             <h1 className="text-lg font-bold text-foreground tracking-tight">Auction Calendar</h1>
             <p className="text-xs text-muted mt-0.5">
-              Upcoming fine art auctions · Christie&apos;s &amp; Sotheby&apos;s
+              Recent fine art auction schedule · Christie&apos;s &amp; Sotheby&apos;s
             </p>
           </div>
           <div className="text-right hidden sm:block">
