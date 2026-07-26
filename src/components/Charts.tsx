@@ -6,8 +6,18 @@ import { allLots, auctionHouses, getCategoryPerformance, formatCurrency } from '
 const MONTH_LABEL_FORMATTER = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' });
 
 const HOUSE_HEATMAP_PALETTE: Record<string, { bg: string; border: string; fg: string; marker: string }> = {
-  christies: { bg: '#FFF0DB', border: '#F5C36A', fg: '#6B4A00', marker: '#f97316' },
-  sothebys: { bg: '#EAF1C7', border: '#B6C53D', fg: '#384000', marker: '#8b9b00' },
+  christies: {
+    bg: 'color-mix(in srgb, var(--th-foreground) 7%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-foreground) 22%, transparent)',
+    fg: 'var(--th-foreground)',
+    marker: 'var(--th-foreground)',
+  },
+  sothebys: {
+    bg: 'color-mix(in srgb, var(--th-accent) 10%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-accent) 34%, transparent)',
+    fg: 'var(--th-foreground)',
+    marker: 'var(--th-accent)',
+  },
 };
 
 function getCurrentMonthHouseVolume() {
@@ -100,16 +110,56 @@ export function MonthlyVolumeChart() {
   );
 }
 
-// Pastel palette — one per category
+// A restrained blue-to-neutral scale derived from the app theme tokens.
 const CAT_PALETTE = [
-  { bg: '#FFF0DB', border: '#F5C36A', fg: '#6B4A00' }, // warm gold
-  { bg: '#DBF0F8', border: '#7EC8E3', fg: '#0D4A6B' }, // sky
-  { bg: '#D8F5E8', border: '#6CC4A0', fg: '#0A4A2A' }, // mint
-  { bg: '#FFE0E0', border: '#F09090', fg: '#6B2020' }, // rose
-  { bg: '#E0E4F8', border: '#9AA4D8', fg: '#2A3570' }, // lavender
-  { bg: '#FFF0E0', border: '#F0B878', fg: '#6A4000' }, // peach
-  { bg: '#D8EAD8', border: '#80C0A0', fg: '#1A4830' }, // sage
-  { bg: '#F8DAE8', border: '#D888B0', fg: '#5A1840' }, // pink
+  {
+    bg: 'color-mix(in srgb, var(--th-accent) 22%, var(--th-surface))',
+    hover: 'color-mix(in srgb, var(--th-accent) 28%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-accent) 52%, transparent)',
+    fg: 'var(--th-foreground)',
+  },
+  {
+    bg: 'color-mix(in srgb, var(--th-accent) 16%, var(--th-surface))',
+    hover: 'color-mix(in srgb, var(--th-accent) 22%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-accent) 42%, transparent)',
+    fg: 'var(--th-foreground)',
+  },
+  {
+    bg: 'color-mix(in srgb, var(--th-accent) 11%, var(--th-surface))',
+    hover: 'color-mix(in srgb, var(--th-accent) 17%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-accent) 32%, transparent)',
+    fg: 'var(--th-foreground)',
+  },
+  {
+    bg: 'color-mix(in srgb, var(--th-accent) 7%, var(--th-surface))',
+    hover: 'color-mix(in srgb, var(--th-accent) 13%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-accent) 25%, transparent)',
+    fg: 'var(--th-foreground)',
+  },
+  {
+    bg: 'color-mix(in srgb, var(--th-foreground) 12%, var(--th-surface))',
+    hover: 'color-mix(in srgb, var(--th-foreground) 17%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-foreground) 28%, transparent)',
+    fg: 'var(--th-foreground)',
+  },
+  {
+    bg: 'color-mix(in srgb, var(--th-foreground) 9%, var(--th-surface))',
+    hover: 'color-mix(in srgb, var(--th-foreground) 14%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-foreground) 23%, transparent)',
+    fg: 'var(--th-foreground)',
+  },
+  {
+    bg: 'color-mix(in srgb, var(--th-foreground) 6%, var(--th-surface))',
+    hover: 'color-mix(in srgb, var(--th-foreground) 11%, var(--th-surface))',
+    border: 'color-mix(in srgb, var(--th-foreground) 18%, transparent)',
+    fg: 'var(--th-foreground)',
+  },
+  {
+    bg: 'var(--th-surface-hover)',
+    hover: 'color-mix(in srgb, var(--th-foreground) 8%, var(--th-surface))',
+    border: 'var(--th-border)',
+    fg: 'var(--th-foreground)',
+  },
 ] as const;
 
 function TileContent({
@@ -171,7 +221,7 @@ function TileContent({
             className={`absolute inset-0 rounded-lg flex flex-col items-center justify-center gap-0.5 backdrop-blur-sm transition-all duration-200 ${
               hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
             }`}
-            style={{ background: `${pal.bg}ee` }}
+            style={{ background: pal.hover }}
           >
             <p className="text-[11px] font-semibold">{d.category}</p>
             <p className="text-lg font-bold font-mono">{d.sellThrough}%</p>

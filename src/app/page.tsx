@@ -170,6 +170,21 @@ export default function AuctionFeedPage() {
         <MarketPulseBar pulse={pulse} houseBreakdown={houseBreakdown} />
       </section>
 
+      {topLots.length > 0 && (
+        <section className="border-t hairline py-10 md:py-14">
+          <TopLotsTable lots={filteredLots} />
+        </section>
+      )}
+
+      <section className="grid grid-cols-1 gap-6 border-t hairline py-10 md:py-14 xl:grid-cols-2">
+        <MonthlyVolumeChart />
+        <CategoryHeatmap />
+      </section>
+
+      <section className="border-t hairline py-10 md:py-14">
+        <SpotlightArtists artists={risingArtists} />
+      </section>
+
       <section className="border-t hairline py-10 md:py-14">
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
@@ -201,21 +216,6 @@ export default function AuctionFeedPage() {
             </button>
           </div>
         )}
-      </section>
-
-      {topLots.length > 0 && (
-        <section className="border-t hairline py-10 md:py-14">
-          <TopLotsTable lots={filteredLots} />
-        </section>
-      )}
-
-      <section className="grid grid-cols-1 gap-6 border-t hairline py-10 md:py-14 xl:grid-cols-2">
-        <MonthlyVolumeChart />
-        <CategoryHeatmap />
-      </section>
-
-      <section className="border-t hairline py-10 md:py-14">
-        <SpotlightArtists artists={risingArtists} />
       </section>
 
       <footer className="flex flex-col gap-3 border-t hairline py-8 text-[10px] uppercase tracking-[0.15em] text-muted sm:flex-row sm:items-center sm:justify-between">
