@@ -574,7 +574,7 @@ export default function CalendarPage() {
         {/* ── Header ── */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-lg font-bold text-foreground tracking-tight">Auction Calendar</h1>
+            <h1 className="display-serif text-2xl text-foreground tracking-tight">Auction Calendar</h1>
             <p className="text-xs text-muted mt-0.5">
               Recent fine art auction schedule · Christie&apos;s &amp; Sotheby&apos;s
             </p>
@@ -659,7 +659,7 @@ export default function CalendarPage() {
                       href={auction.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center gap-3 px-4 py-3 rounded-xl bg-surface border border-border hover:border-border-light hover:bg-surface-hover transition-all"
+                      className="group flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface border border-border hover:border-border-light hover:bg-surface-hover transition-all"
                     >
                       {/* Date */}
                       <span className="w-[72px] shrink-0 text-[11px] font-mono text-muted">

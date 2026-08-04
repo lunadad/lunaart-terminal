@@ -9,23 +9,23 @@ interface Props {
 
 export default function SpotlightArtists({ artists }: Props) {
   return (
-    <div className="bg-surface border border-border rounded-xl p-3 md:p-5">
+    <div className="bg-surface border border-border rounded-[22px] p-3 md:p-5">
       <div className="flex items-center justify-between mb-3 md:mb-4">
-        <h3 className="text-xs md:text-sm font-semibold text-foreground">오늘 주목 작가 5인</h3>
+        <h3 className="display-serif text-base md:text-lg text-foreground">오늘 주목 작가 5인</h3>
         <span className="text-[10px] text-muted font-mono">RISING ARTISTS</span>
       </div>
       <div className="space-y-2 md:space-y-3">
         {artists.map((ra, i) => (
           <div
             key={ra.artist.id}
-            className="flex items-start gap-2.5 md:gap-4 p-2.5 md:p-3 rounded-lg bg-background hover:bg-surface-hover transition-all border border-transparent hover:border-border-light"
+            className="flex items-start gap-2.5 md:gap-4 p-2.5 md:p-3 rounded-2xl bg-background hover:bg-surface-hover transition-all border border-transparent hover:border-border-light"
           >
             <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
               <span className="text-xs md:text-sm font-bold text-accent">{i + 1}</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-                <h4 className="text-xs md:text-sm font-semibold text-foreground truncate">{ra.artist.name}</h4>
+                <h4 className="display-serif text-sm md:text-base text-foreground truncate">{ra.artist.name}</h4>
                 <span className="px-1.5 py-0.5 rounded bg-green/10 text-green text-[10px] font-mono font-medium shrink-0">
                   +{ra.momentum.toFixed(0)}%
                 </span>

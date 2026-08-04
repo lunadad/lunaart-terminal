@@ -178,11 +178,11 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="p-5 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-            <span className="text-white font-bold text-sm">LT</span>
+          <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shadow-sm">
+            <span className="display-serif text-white text-base italic">L</span>
           </div>
           <div>
-            <h1 id="mobile-sidebar-title" className="text-sm font-bold tracking-wide text-foreground">LunaArt</h1>
+            <h1 id="mobile-sidebar-title" className="display-serif text-base text-foreground">LunaArt</h1>
             <p className="text-[10px] text-muted tracking-widest uppercase">Terminal</p>
           </div>
         </div>
@@ -199,16 +199,16 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-1">
+      <nav className="flex-1 p-3 space-y-1.5">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface ${
+              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface ${
                 isActive
-                  ? 'bg-accent/15 text-accent font-medium'
+                  ? 'bg-accent text-white font-medium shadow-sm'
                   : 'text-text-secondary hover:bg-surface-hover hover:text-foreground'
               }`}
             >
@@ -356,7 +356,7 @@ export default function Sidebar() {
         tabIndex={-1}
         className={`
           fixed md:relative z-50 md:z-auto
-          w-[260px] md:w-[220px] h-full
+          w-[270px] md:w-[236px] h-full
           bg-surface border-r border-border
           flex flex-col shrink-0
           transition-transform duration-300 ease-in-out

@@ -13,9 +13,9 @@ export default function TopLotsTable({ lots }: Props) {
     .slice(0, 10);
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-5">
+    <div className="bg-surface border border-border rounded-[22px] p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-foreground">상위 10개 로트</h3>
+        <h3 className="display-serif text-lg text-foreground">상위 10개 로트</h3>
         <span className="text-[10px] text-muted font-mono">TOP LOTS BY VALUE</span>
       </div>
       <div className="overflow-x-auto">

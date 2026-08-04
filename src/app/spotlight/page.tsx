@@ -85,12 +85,12 @@ export default function SpotlightPage() {
     <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-[1400px]">
       {/* Header */}
       <div>
-        <h1 className="text-lg md:text-xl font-bold text-foreground">Spotlight Dashboard</h1>
+        <h1 className="display-serif text-2xl md:text-3xl text-foreground">Spotlight Dashboard</h1>
         <p className="text-xs md:text-sm text-muted mt-0.5">주목 작가 &middot; 작품 인사이트</p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="scroll-fade flex gap-1 bg-surface border border-border rounded-xl p-1 md:p-1.5 overflow-x-auto no-scrollbar pr-7">
+      <div className="scroll-fade flex gap-1 bg-surface border border-border rounded-[22px] p-1 md:p-1.5 overflow-x-auto no-scrollbar pr-7">
         {tabs.map(tab => (
           <button
             key={tab.key}
@@ -113,7 +113,7 @@ export default function SpotlightPage() {
           {risingArtists.map((ra, i) => (
             <div
               key={ra.artist.id}
-              className="bg-surface border border-border rounded-xl p-3 md:p-5 hover:border-border-light transition-all"
+              className="bg-surface border border-border rounded-[22px] p-3 md:p-5 hover:border-border-light transition-all"
             >
               <div className="flex items-start gap-3 md:gap-5">
                 <div className="w-9 h-9 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-accent/30 to-purple/30 flex items-center justify-center shrink-0">

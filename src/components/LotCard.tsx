@@ -20,10 +20,10 @@ export default function LotCard({ lot }: Props) {
       href={lot.lotUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+      className="group block min-w-0 overflow-hidden rounded-[22px] border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-border-light hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-background"
     >
       <div
-        className={`relative aspect-[4/3] overflow-hidden bg-surface border hairline ${
+        className={`relative aspect-[4/5] overflow-hidden bg-surface ${
           lot.auctionHouseId === 'christies'
             ? 'bg-[linear-gradient(135deg,#f0a45d,#672d45)]'
             : 'bg-[linear-gradient(135deg,#b7c65a,#21334b)]'
@@ -31,18 +31,18 @@ export default function LotCard({ lot }: Props) {
       >
         {lot.imageUrl && (
           <div
-            className="absolute inset-0 bg-center bg-contain bg-no-repeat transition-transform duration-500 group-hover:scale-[1.03]"
+            className="absolute inset-3 rounded-[15px] bg-center bg-contain bg-no-repeat transition-transform duration-700 group-hover:scale-[1.035]"
             style={{ backgroundImage: `url("${lot.imageUrl}")` }}
             role="img"
             aria-label={`${lot.artist.name}, ${lot.title}`}
           />
         )}
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
-          <span className="bg-background/90 px-2.5 py-1 text-[10px] font-medium text-foreground backdrop-blur">
+        <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
+          <span className="rounded-full border border-white/20 bg-background/85 px-3 py-1.5 text-[10px] font-medium text-foreground backdrop-blur-md">
             {lot.auctionHouse.name} · LOT {lot.lotNumber}
           </span>
           {(isRecord || isSurprise || !lot.result.sold) && (
-            <span className={`px-2.5 py-1 text-[10px] font-semibold ${
+            <span className={`rounded-full px-3 py-1.5 text-[10px] font-semibold ${
               !lot.result.sold
                 ? 'bg-red text-white'
                 : isRecord
@@ -55,10 +55,10 @@ export default function LotCard({ lot }: Props) {
         </div>
       </div>
 
-      <div className="pt-3">
+      <div className="p-4 pt-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="text-base font-semibold leading-tight text-foreground group-hover:underline underline-offset-4">
+            <h3 className="display-serif text-lg leading-tight text-foreground group-hover:text-accent">
               {lot.artist.name}
             </h3>
             <p className="mt-1 truncate text-sm italic text-text-secondary">
@@ -80,7 +80,7 @@ export default function LotCard({ lot }: Props) {
         ) : (
           <p className="mt-3 text-sm font-medium text-red">Passed / Unsold</p>
         )}
-        <p className="mt-2 truncate text-[11px] text-muted">
+        <p className="mt-3 border-t border-border pt-3 truncate text-[11px] text-muted">
           {lot.saleEvent.name} · {lot.saleEvent.city} · {lot.saleEvent.date}
         </p>
       </div>
