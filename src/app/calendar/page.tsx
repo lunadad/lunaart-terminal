@@ -24,6 +24,11 @@ const MONTH_LABELS: Record<string, string> = {
   '2026-05': 'May 2026',
   '2026-06': 'June 2026',
   '2026-07': 'July 2026',
+  '2026-08': 'August 2026',
+  '2026-09': 'September 2026',
+  '2026-10': 'October 2026',
+  '2026-11': 'November 2026',
+  '2026-12': 'December 2026',
 };
 
 const auctions: Auction[] = [
@@ -519,6 +524,258 @@ const auctions: Auction[] = [
     href: "https://www.christies.com/en/auction/post-war-to-present-online-24577-cks/",
     kind: 'online',
   },
+
+  // ── August 2026 · Christie's ────────────────────────────────────────
+  {
+    house: 'christies',
+    title: "Inside Job: Christie's New York Staff Art Show",
+    date: "5–19 Aug",
+    dateSort: "2026-08-05",
+    location: "New York",
+    href: "https://onlineonly.christies.com/s/inside-job-christies-new-york-staff-art-show/lots/3940",
+    kind: 'online',
+  },
+  {
+    house: 'christies',
+    title: "Studio 1766: Christie's London Staff Art Show",
+    date: "20 Aug–3 Sep",
+    dateSort: "2026-08-20",
+    location: "London",
+    href: "https://www.christies.com/en/departments/post-war-and-contemporary-art",
+    kind: 'online',
+  },
+
+  // ── September 2026 · Christie's ─────────────────────────────────────
+  {
+    house: 'christies',
+    title: "20th/21st Century Evening Sale",
+    date: "29 Sep",
+    dateSort: "2026-09-29a",
+    location: "Hong Kong",
+    href: "https://www.christies.com/en/auction/20th-21st-century-evening-sale-23847-hgk/",
+    kind: 'live',
+  },
+  {
+    house: 'christies',
+    title: "20th Century Day Sale",
+    date: "30 Sep",
+    dateSort: "2026-09-30a",
+    location: "Hong Kong",
+    href: "https://www.christies.com/en/auction/20th-century-day-sale-30624/overview",
+    kind: 'live',
+  },
+  {
+    house: 'christies',
+    title: "21st Century Day Sale",
+    date: "30 Sep",
+    dateSort: "2026-09-30b",
+    location: "Hong Kong",
+    href: "https://www.christies.com/en/departments/post-war-and-contemporary-art",
+    kind: 'live',
+  },
+
+  // ── September 2026 · Sotheby's ──────────────────────────────────────
+  {
+    house: 'sothebys',
+    title: "Collection Rochas, Le bestiaire rêvé",
+    date: "15 Sep",
+    dateSort: "2026-09-15",
+    location: "Paris",
+    href: "https://www.sothebys.com/en/buy/auction/2026/collection-rochas-le-bestiaire-reve-pf2645",
+    kind: 'live',
+  },
+  {
+    house: 'sothebys',
+    title: "Prints & Multiples",
+    date: "16–23 Sep",
+    dateSort: "2026-09-16",
+    location: "London",
+    href: "https://www.sothebys.com/en/buy/auction/2026/prints-multiples-l26161",
+    kind: 'online',
+  },
+  {
+    house: 'sothebys',
+    title: "Modern & Contemporary Evening Auction",
+    date: "29 Sep",
+    dateSort: "2026-09-29b",
+    location: "Hong Kong",
+    href: "https://www.sothebys.com/en/departments/modern-art-asia",
+    kind: 'live',
+  },
+  {
+    house: 'sothebys',
+    title: "Modern Day Auction",
+    date: "30 Sep",
+    dateSort: "2026-09-30c",
+    location: "Hong Kong",
+    href: "https://www.sothebys.com/en/online-auctions.html/",
+    kind: 'live',
+  },
+  {
+    house: 'sothebys',
+    title: "Contemporary Day Auction",
+    date: "30 Sep",
+    dateSort: "2026-09-30d",
+    location: "Hong Kong",
+    href: "https://www.sothebys.com/en/departments/contemporary-art",
+    kind: 'live',
+  },
+
+  // ── October 2026 · Christie's ───────────────────────────────────────
+  {
+    house: 'christies',
+    title: "Post-War to Present",
+    date: "1 Oct",
+    dateSort: "2026-10-01",
+    location: "New York",
+    href: "https://www.christies.com/en/auction/post-war-to-present-29238/overview",
+    kind: 'live',
+  },
+  {
+    house: 'christies',
+    title: "Avant-Garde(s) including Thinking Italian",
+    date: "22 Oct",
+    dateSort: "2026-10-22a",
+    location: "Paris",
+    href: "https://www.christies.com/en/auction/avant-garde-s-including-thinking-italian-24607-par/",
+    kind: 'live',
+  },
+  {
+    house: 'christies',
+    title: "Art Contemporain - Vente du Jour",
+    date: "23 Oct",
+    dateSort: "2026-10-23c",
+    location: "Paris",
+    href: "https://www.christies.com/en/auction/art-contemporain-vente-du-jour-24609-par/",
+    kind: 'live',
+  },
+
+  // ── October 2026 · Sotheby's ────────────────────────────────────────
+  {
+    house: 'sothebys',
+    title: "Modern Discoveries",
+    date: "22–29 Oct",
+    dateSort: "2026-10-22b",
+    location: "London",
+    href: "https://www.sothebys.com/en/buy/auction/2026/modern-discoveries-l26158",
+    kind: 'online',
+  },
+  {
+    house: 'sothebys',
+    title: "Surrealism and Its Legacy",
+    date: "23 Oct",
+    dateSort: "2026-10-23a",
+    location: "Paris",
+    href: "https://www.sothebys.com/en/buy/auction/2026/surrealism-and-its-legacy-pf2666",
+    kind: 'live',
+  },
+  {
+    house: 'sothebys',
+    title: "Modernités",
+    date: "23 Oct",
+    dateSort: "2026-10-23b",
+    location: "Paris",
+    href: "https://www.sothebys.com/en/buy/auction/2026/modernites-pf2616",
+    kind: 'live',
+  },
+  {
+    house: 'sothebys',
+    title: "Asian Art / 5000 Years",
+    date: "30 Oct–6 Nov",
+    dateSort: "2026-10-30",
+    location: "London",
+    href: "https://www.sothebys.com/en/buy/auction/2026/asian-art-5000-years-l26156",
+    kind: 'online',
+  },
+
+  // ── November 2026 · Christie's ──────────────────────────────────────
+  {
+    house: 'christies',
+    title: "20th Century Evening Sale",
+    date: "2–20 Nov",
+    dateSort: "2026-11-02a",
+    location: "New York",
+    href: "https://www.christies.com/en/departments/post-war-and-contemporary-art",
+    kind: 'online',
+  },
+  {
+    house: 'christies',
+    title: "Post-War and Contemporary Art Day Sale",
+    date: "2–20 Nov",
+    dateSort: "2026-11-02b",
+    location: "New York",
+    href: "https://www.christies.com/en/departments/post-war-and-contemporary-art",
+    kind: 'online',
+  },
+  {
+    house: 'christies',
+    title: "21st Century Evening Sale",
+    date: "2–20 Nov",
+    dateSort: "2026-11-02c",
+    location: "New York",
+    href: "https://www.christies.com/en/departments/post-war-and-contemporary-art",
+    kind: 'online',
+  },
+  {
+    house: 'christies',
+    title: "20th/21st Century Online",
+    date: "17–27 Nov",
+    dateSort: "2026-11-17",
+    location: "Hong Kong",
+    href: "https://www.christies.com/en/departments/post-war-and-contemporary-art",
+    kind: 'online',
+  },
+  {
+    house: 'christies',
+    title: "20/21 Century Art - Art Contemporain",
+    date: "19 Nov–3 Dec",
+    dateSort: "2026-11-19",
+    location: "Paris",
+    href: "https://www.christies.com/en/auction/20-21-century-art-art-contemporain-24618-par/",
+    kind: 'online',
+  },
+
+  // ── November 2026 · Sotheby's ───────────────────────────────────────
+  {
+    house: 'sothebys',
+    title: "Chinese Art",
+    date: "4 Nov",
+    dateSort: "2026-11-04",
+    location: "London",
+    href: "https://www.sothebys.com/en/buy/auction/2026/chinese-art-l26155",
+    kind: 'live',
+  },
+
+  // ── December 2026 · Christie's ──────────────────────────────────────
+  {
+    house: 'christies',
+    title: "First Open | Post-War & Contemporary Art",
+    date: "1–15 Dec",
+    dateSort: "2026-12-01",
+    location: "New York",
+    href: "https://www.christies.com/en/departments/post-war-and-contemporary-art",
+    kind: 'online',
+  },
+
+  // ── December 2026 · Sotheby's ───────────────────────────────────────
+  {
+    house: 'sothebys',
+    title: "Artist Books",
+    date: "3–17 Dec",
+    dateSort: "2026-12-03",
+    location: "Paris",
+    href: "https://www.sothebys.com/en/buy/auction/2026/artist-books-pf2623",
+    kind: 'online',
+  },
+  {
+    house: 'sothebys',
+    title: "Art d'Afrique, d'Océanie et des Amériques",
+    date: "9 Dec",
+    dateSort: "2026-12-09",
+    location: "Paris",
+    href: "https://www.sothebys.com/en/buy/auction/2026/art-dafrique-doceanie-et-des-ameriques-pf2691",
+    kind: 'live',
+  },
 ];
 
 function groupByMonth(list: Auction[]): [string, Auction[]][] {
@@ -576,7 +833,7 @@ export default function CalendarPage() {
           <div>
             <h1 className="display-serif text-2xl text-foreground tracking-tight">Auction Calendar</h1>
             <p className="text-xs text-muted mt-0.5">
-              Recent fine art auction schedule · Christie&apos;s &amp; Sotheby&apos;s
+              Fine art auction schedule through December 2026 · Christie&apos;s &amp; Sotheby&apos;s
             </p>
           </div>
           <div className="text-right hidden sm:block">
