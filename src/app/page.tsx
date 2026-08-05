@@ -205,7 +205,6 @@ export default function AuctionFeedPage() {
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">At auction</p>
-            <h2 className="mt-1 text-2xl font-bold tracking-[-0.035em] text-foreground md:text-3xl">최근 낙찰 결과</h2>
           </div>
           <p className="text-xs text-muted">{filteredLots.length} lots</p>
         </div>
