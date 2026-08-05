@@ -98,7 +98,6 @@ export default function AuctionFeedPage() {
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-xs font-extrabold tracking-[0.12em] text-accent">TODAY&apos;S MARKET SIGNAL</p>
-            <h1 className="mt-1 text-2xl font-black tracking-[-0.04em] text-foreground sm:text-3xl">오늘의 경매 인텔리전스</h1>
           </div>
           <p className="hidden text-sm text-text-secondary sm:block">데이터 기준 {latestDate}</p>
         </div>
@@ -181,7 +180,6 @@ export default function AuctionFeedPage() {
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Market overview</p>
-            <h2 className="mt-1 text-2xl font-black tracking-[-0.035em] text-foreground md:text-3xl">최근 세일이 말해주는 것</h2>
           </div>
           <p className="hidden text-right text-xs text-muted md:block">Filtered in real time</p>
         </div>
