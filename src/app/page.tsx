@@ -90,63 +90,81 @@ export default function AuctionFeedPage() {
   );
   const latestDate = allLots[0]?.saleEvent.date || '—';
   const risingArtists = getRisingArtists();
+  const leadLot = topLots[0];
 
   return (
-    <div className="mx-auto max-w-[1640px] px-3 pb-16 md:px-7 lg:px-10">
-      <header className="newbook-hero soft-shadow mt-3 overflow-hidden rounded-[28px] border border-border px-5 pb-6 pt-5 md:mt-6 md:rounded-[36px] md:px-10 md:pb-10 md:pt-8 lg:px-14">
-        <div className="mb-12 flex items-center justify-between gap-4 text-[10px] font-mono uppercase tracking-[0.2em] text-muted">
-          <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-green" /> Live auction intelligence</span>
-          <span className="rounded-full border border-border bg-background/50 px-3 py-1.5 backdrop-blur">Data through {latestDate}</span>
-        </div>
-
-        <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_390px] xl:items-end">
+    <div className="mx-auto max-w-[1240px] px-4 pb-16 sm:px-6 lg:px-8">
+      <header className="pt-7 sm:pt-10">
+        <div className="flex items-end justify-between gap-4">
           <div>
-            <h1 className="editorial-display max-w-5xl text-foreground">
-              Discover the market.
-              <br />
-              Follow the signal.
-            </h1>
-            <p className="mt-7 max-w-xl text-sm leading-7 text-text-secondary md:text-base">
-              Christie&apos;s와 Sotheby&apos;s의 최신 낙찰 결과를 한곳에서 비교하고,
-              가격 흐름과 작가 모멘텀을 빠르게 읽어보세요.
-            </p>
+            <p className="text-xs font-extrabold tracking-[0.12em] text-accent">TODAY&apos;S MARKET SIGNAL</p>
+            <h1 className="mt-1 text-2xl font-black tracking-[-0.04em] text-foreground sm:text-3xl">오늘의 경매 인텔리전스</h1>
           </div>
+          <p className="hidden text-sm text-text-secondary sm:block">데이터 기준 {latestDate}</p>
+        </div>
+        <p className="mt-2 text-sm text-text-secondary sm:hidden">데이터 기준 {latestDate}</p>
 
-          <div className="grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-background/50 backdrop-blur">
-            <div className="border-r border-border p-5">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted">Tracked lots</p>
-              <p className="display-serif mt-2 text-4xl text-foreground">{filteredLots.length}</p>
+        <div className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)]">
+          {leadLot ? (
+            <a
+              href={leadLot.lotUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative min-h-[360px] overflow-hidden rounded-2xl bg-surface-hover sm:min-h-[470px]"
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.025]"
+                style={{ backgroundImage: leadLot.imageUrl ? `url("${leadLot.imageUrl}")` : undefined }}
+                role="img"
+                aria-label={`${leadLot.artist.name}, ${leadLot.title}`}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/15" />
+              <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
+                <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white/75">
+                  <span className="rounded-full border border-white/30 px-2.5 py-1">Top lot</span>
+                  <span>{leadLot.auctionHouse.name} · Lot {leadLot.lotNumber}</span>
+                </div>
+                <h2 className="text-3xl font-black tracking-[-0.04em] sm:text-5xl">{leadLot.artist.name}</h2>
+                <p className="mt-2 line-clamp-1 text-sm text-white/80 sm:text-base">{leadLot.title}{leadLot.year ? `, ${leadLot.year}` : ''}</p>
+                <p className="mt-4 font-mono text-xl font-bold sm:text-2xl">{formatCurrency(leadLot.result.usdEquivalent || 0)} USD</p>
+              </div>
+            </a>
+          ) : null}
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            <div className="newbook-hero rounded-2xl border border-border p-5 sm:p-6">
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">Market brief</p>
+              <h2 className="mt-3 text-2xl font-black leading-tight tracking-[-0.035em] text-foreground">숫자보다 먼저,<br />시장의 방향을 읽으세요.</h2>
+              <p className="mt-3 text-sm leading-6 text-text-secondary">Christie&apos;s와 Sotheby&apos;s의 최신 낙찰 결과, 가격 흐름, 작가 모멘텀을 한 화면에서 비교합니다.</p>
+              <div className="mt-5 grid grid-cols-2 divide-x divide-border border-t border-border pt-4">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted">Tracked lots</p>
+                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-foreground">{filteredLots.length}</p>
+                </div>
+                <div className="pl-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted">Volume</p>
+                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-foreground">${formatCurrency(pulse.totalVolume)}</p>
+                </div>
+              </div>
             </div>
-            <div className="p-5">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted">Volume</p>
-              <p className="display-serif mt-2 text-4xl text-foreground">${formatCurrency(pulse.totalVolume)}</p>
-            </div>
+
+            <label className="flex min-h-16 items-center gap-3 rounded-2xl border border-border bg-surface px-5 text-muted transition-all focus-within:border-accent focus-within:text-accent focus-within:ring-2 focus-within:ring-accent/10">
+              <SearchIcon />
+              <span className="sr-only">작가, 작품 또는 경매 검색</span>
+              <input
+                type="search"
+                value={query}
+                onChange={event => setQuery(event.target.value)}
+                placeholder="작가, 작품, 경매 검색"
+                className="w-full bg-transparent text-sm font-medium text-foreground outline-none placeholder:text-muted"
+              />
+              {query && <button type="button" onClick={() => setQuery('')} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-foreground">Clear</button>}
+            </label>
           </div>
         </div>
-
-        <label className="mt-10 flex items-center gap-3 rounded-full border border-border bg-background/80 px-5 py-4 text-muted shadow-sm backdrop-blur transition-all focus-within:border-accent focus-within:text-accent focus-within:shadow-md md:max-w-3xl">
-          <SearchIcon />
-          <span className="sr-only">작가, 작품 또는 경매 검색</span>
-          <input
-            type="search"
-            value={query}
-            onChange={event => setQuery(event.target.value)}
-            placeholder="Search artists, works, auctions, cities…"
-            className="w-full bg-transparent text-base text-foreground outline-none placeholder:text-muted md:text-lg"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery('')}
-              className="text-xs uppercase tracking-wider text-muted hover:text-foreground"
-            >
-              Clear
-            </button>
-          )}
-        </label>
       </header>
 
-      <section className="my-5 rounded-2xl border border-border bg-surface px-4 py-5 md:px-6">
+      <section className="my-4 rounded-2xl border border-border bg-surface px-4 py-4 md:px-5">
         <FilterBar
           timeFilter={timeFilter}
           mediumFilter={mediumFilter}
@@ -159,43 +177,43 @@ export default function AuctionFeedPage() {
         />
       </section>
 
-      <section className="py-10 md:py-14">
+      <section className="py-10 md:py-12">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted">Market overview</p>
-            <h2 className="display-serif mt-2 text-3xl text-foreground md:text-4xl">What the latest sales are saying</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Market overview</p>
+            <h2 className="mt-1 text-2xl font-black tracking-[-0.035em] text-foreground md:text-3xl">최근 세일이 말해주는 것</h2>
           </div>
           <p className="hidden text-right text-xs text-muted md:block">Filtered in real time</p>
         </div>
         <MarketPulseBar pulse={pulse} houseBreakdown={houseBreakdown} />
       </section>
 
-      <section className="grid grid-cols-1 gap-6 border-t hairline py-10 md:py-14 xl:grid-cols-2">
+      <section className="grid grid-cols-1 gap-4 border-t hairline py-10 md:py-12 xl:grid-cols-2">
         <MonthlyVolumeChart />
         <CategoryHeatmap />
       </section>
 
       {topLots.length > 0 && (
-        <section className="border-t hairline py-10 md:py-14">
+        <section className="border-t hairline py-10 md:py-12">
           <TopLotsTable lots={filteredLots} />
         </section>
       )}
 
-      <section className="border-t hairline py-10 md:py-14">
+      <section className="border-t hairline py-10 md:py-12">
         <SpotlightArtists artists={risingArtists} />
       </section>
 
-      <section className="border-t hairline py-10 md:py-14">
+      <section className="border-t hairline py-10 md:py-12">
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted">At auction</p>
-            <h2 className="display-serif mt-2 text-3xl text-foreground md:text-4xl">Recent results</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">At auction</p>
+            <h2 className="mt-1 text-2xl font-black tracking-[-0.035em] text-foreground md:text-3xl">최근 낙찰 결과</h2>
           </div>
           <p className="text-xs text-muted">{filteredLots.length} lots</p>
         </div>
 
         {filteredLots.length > 0 ? (
-          <div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {filteredLots.slice(0, 24).map(lot => <LotCard key={lot.id} lot={lot} />)}
           </div>
         ) : (

@@ -48,17 +48,17 @@ export default function MarketPulseBar({ pulse, houseBreakdown = [] }: Props) {
   ];
 
   return (
-    <div className="overflow-hidden rounded-[22px] border border-border bg-surface">
-      <div className="flex items-center gap-2 border-b border-border px-5 py-4">
+    <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+      <div className="flex items-center gap-2 border-b border-border px-5 py-3.5">
         <div className="w-2 h-2 rounded-full bg-green animate-pulse-dot" />
-        <h2 className="text-xs md:text-sm font-semibold text-foreground tracking-wide">이달의 마켓 펄스</h2>
+        <h2 className="text-xs font-bold text-foreground tracking-wide">이달의 마켓 펄스</h2>
         <span className="text-[10px] md:text-xs text-muted ml-auto font-mono hidden sm:block">MARKET PULSE</span>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4">
         {metrics.map((m) => (
-          <div key={m.label} className="min-w-0 space-y-1 border-b border-r hairline p-4 transition-colors hover:bg-surface-hover last:border-r-0 lg:border-b-0 md:p-6">
+          <div key={m.label} className="min-w-0 space-y-1 border-b border-r hairline p-4 transition-colors hover:bg-surface-hover last:border-r-0 lg:border-b-0 md:p-5">
             <p className="text-[10px] md:text-xs text-muted uppercase tracking-wider">{m.label}</p>
-            <p className={`text-lg md:text-xl lg:text-2xl font-bold ${m.color} font-mono truncate`}>{m.value}</p>
+            <p className={`text-xl lg:text-2xl font-black tracking-[-0.035em] ${m.color} truncate`}>{m.value}</p>
             <p className="text-[10px] md:text-xs text-text-secondary">{m.sub}</p>
           </div>
         ))}

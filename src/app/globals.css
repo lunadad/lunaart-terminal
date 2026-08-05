@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   /* Tailwind v4: @theme (not inline) generates var() references in utilities */
   --color-background: var(--th-background);
@@ -17,50 +25,50 @@
   --color-purple: var(--th-purple);
   --color-muted: var(--th-muted);
   --color-text-secondary: var(--th-text-secondary);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-playfair);
+  --font-sans: "Pretendard Variable", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-serif: Georgia, "Times New Roman", serif;
 }
 
 /* ── Dark theme (default) ── */
 :root,
 [data-theme="dark"] {
-  --th-background: #0d1116;
-  --th-foreground: #f3f0ed;
-  --th-surface: #151b22;
-  --th-surface-hover: #1d2630;
-  --th-border: #27323d;
-  --th-border-light: #3a4855;
-  --th-accent: #9aaec1;
-  --th-accent-dim: #54708b;
+  --th-background: #121110;
+  --th-foreground: #f0eeea;
+  --th-surface: #1a1917;
+  --th-surface-hover: #232120;
+  --th-border: #322f2c;
+  --th-border-light: #48433f;
+  --th-accent: #e0879a;
+  --th-accent-dim: #a95366;
   --th-green: #00d26a;
   --th-red: #ff4757;
   --th-orange: #ffa502;
   --th-yellow: #ffd43b;
   --th-purple: #a855f7;
-  --th-muted: #7f8d9a;
-  --th-text-secondary: #b9c2cb;
-  --scrollbar-color: #3a4855;
+  --th-muted: #7d7972;
+  --th-text-secondary: #b0aca5;
+  --scrollbar-color: #48433f;
 }
 
 /* ── Light theme (Claude-inspired warm tone) ── */
 [data-theme="light"] {
-  --th-background: #fbf8f6;
-  --th-foreground: #222222;
+  --th-background: #f7f6f4;
+  --th-foreground: #1a1a19;
   --th-surface: #ffffff;
-  --th-surface-hover: #f7eae4;
-  --th-border: #e7e1dd;
-  --th-border-light: #cfc6c0;
-  --th-accent: #54708b;
-  --th-accent-dim: #405a72;
+  --th-surface-hover: #f0efec;
+  --th-border: #e4e2dd;
+  --th-border-light: #cbc8c1;
+  --th-accent: #7c2d3b;
+  --th-accent-dim: #5f202c;
   --th-green: #1a8d5f;
   --th-red: #c93b3b;
   --th-orange: #c27a1a;
   --th-yellow: #a68b1a;
   --th-purple: #7c3aed;
-  --th-muted: #7d7b78;
-  --th-text-secondary: #55514e;
-  --scrollbar-color: #cfc6c0;
+  --th-muted: #94918a;
+  --th-text-secondary: #63615c;
+  --scrollbar-color: #cbc8c1;
 }
 
 * {
@@ -71,7 +79,8 @@
 body {
   background: var(--th-background);
   color: var(--th-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: "Pretendard Variable", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -81,31 +90,35 @@ body {
 }
 
 .editorial-display {
-  font-family: var(--font-playfair), Georgia, serif;
-  font-size: clamp(3rem, 6vw, 6.5rem);
-  line-height: 0.92;
+  font-family: "Pretendard Variable", sans-serif;
+  font-size: clamp(2.25rem, 5vw, 4.75rem);
+  line-height: 0.98;
   letter-spacing: -0.055em;
-  font-weight: 500;
+  font-weight: 850;
 }
 
 .display-serif {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 .newbook-hero {
   background:
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--th-accent) 22%, transparent), transparent 32%),
-    linear-gradient(145deg, color-mix(in srgb, #f7eae4 16%, var(--th-surface)), var(--th-surface));
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--th-accent) 12%, transparent), transparent 36%),
+    var(--th-surface);
 }
 
 [data-theme="light"] .newbook-hero {
   background:
-    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--th-accent) 16%, transparent), transparent 34%),
-    linear-gradient(145deg, #f7eae4, #ffffff 72%);
+    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--th-accent) 8%, transparent), transparent 38%),
+    #ffffff;
 }
 
 .soft-shadow {
-  box-shadow: 0 18px 50px color-mix(in srgb, var(--th-foreground) 7%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--th-foreground) 3%, transparent), 0 14px 36px color-mix(in srgb, var(--th-foreground) 5%, transparent);
+}
+
+.mobile-bottom-safe {
+  padding-bottom: max(0.4rem, env(safe-area-inset-bottom));
 }
 
 .hairline {
@@ -160,4 +173,12 @@ body {
   background: linear-gradient(90deg, transparent 0%, var(--th-border) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

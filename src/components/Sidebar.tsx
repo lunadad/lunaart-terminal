@@ -2,70 +2,23 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTheme } from './ThemeProvider';
 import { auctionSeasons } from '@/lib/auction-seasons';
 
-const VERSION = 'v0.1.0';
-
-const navItems = [
-  {
-    href: '/',
-    label: 'Auction Feed',
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
-      </svg>
-    ),
-  },
-  {
-    href: '/spotlight',
-    label: 'Spotlight',
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-      </svg>
-    ),
-  },
-  {
-    href: '/calendar',
-    label: 'Calendar',
-    icon: (
-      <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
-      </svg>
-    ),
-  },
+const primaryNavigation = [
+  { href: '/', label: '피드', shortLabel: '피드', mark: '●' },
+  { href: '/spotlight', label: '스포트라이트', shortLabel: '작가', mark: 'S' },
+  { href: '/calendar', label: '캘린더', shortLabel: '일정', mark: '□' },
 ];
 
-function SunIcon() {
-  return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+function ThemeIcon({ theme }: { theme: 'dark' | 'light' }) {
+  return theme === 'dark' ? (
+    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.598.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
     </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-    </svg>
-  );
-}
-
-function HamburgerIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+  ) : (
+    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
     </svg>
   );
 }
@@ -73,352 +26,86 @@ function CloseIcon() {
 export default function Sidebar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [seasonMenuOpen, setSeasonMenuOpen] = useState(pathname.startsWith('/seasons'));
-  const [isMobile, setIsMobile] = useState(false);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const drawerRef = useRef<HTMLElement>(null);
+  const latestSeason = auctionSeasons[0];
 
-  // Crawl controls state
-  const [scheduleTime, setScheduleTime] = useState(() =>
-    typeof window !== 'undefined' ? (localStorage.getItem('crawlSchedule') ?? '09:00') : '09:00'
-  );
-  const [editingSchedule, setEditingSchedule] = useState(false);
-  const [tempTime, setTempTime] = useState('09:00');
-  const [crawling, setCrawling] = useState(false);
-  const [lastCrawled, setLastCrawled] = useState<string | null>(() =>
-    typeof window !== 'undefined' ? localStorage.getItem('lastCrawled') : null
-  );
-  const timeInputRef = useRef<HTMLInputElement>(null);
-
-  const closeMobileMenu = useCallback((restoreFocus = true) => {
-    setMobileOpen(false);
-    if (restoreFocus) {
-      window.setTimeout(() => menuButtonRef.current?.focus(), 0);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (editingSchedule) timeInputRef.current?.focus();
-  }, [editingSchedule]);
-
-  function openScheduleEdit() { setTempTime(scheduleTime); setEditingSchedule(true); }
-  function saveSchedule() {
-    setScheduleTime(tempTime);
-    localStorage.setItem('crawlSchedule', tempTime);
-    setEditingSchedule(false);
-  }
-  async function runCrawl() {
-    setCrawling(true);
-    await new Promise(r => setTimeout(r, 1800));
-    const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
-    setLastCrawled(now);
-    localStorage.setItem('lastCrawled', now);
-    setCrawling(false);
-  }
-
-  // Close mobile menu on route change
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setMobileOpen(false));
-    return () => window.cancelAnimationFrame(frame);
-  }, [pathname]);
-
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 767px)');
-    const syncMobile = () => setIsMobile(media.matches);
-    syncMobile();
-    media.addEventListener('change', syncMobile);
-    return () => media.removeEventListener('change', syncMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!drawerRef.current) return;
-    (drawerRef.current as HTMLElement & { inert: boolean }).inert = isMobile && !mobileOpen;
-  }, [isMobile, mobileOpen]);
-
-  useEffect(() => {
-    if (!mobileOpen) return;
-    window.setTimeout(() => closeButtonRef.current?.focus(), 0);
-  }, [mobileOpen]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!mobileOpen) return;
-
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        closeMobileMenu();
-        return;
-      }
-
-      if (e.key !== 'Tab' || !drawerRef.current) return;
-      const focusable = Array.from(
-        drawerRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-      );
-      if (focusable.length === 0) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [closeMobileMenu, mobileOpen]);
-
-  const sidebarContent = (
-    <>
-      {/* Logo */}
-      <div className="p-5 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shadow-sm">
-            <span className="display-serif text-white text-base italic">L</span>
-          </div>
-          <div>
-            <h1 id="mobile-sidebar-title" className="display-serif text-base text-foreground">LunaArt</h1>
-            <p className="text-[10px] text-muted tracking-widest uppercase">Terminal</p>
-          </div>
-        </div>
-        {/* Mobile close button */}
-        <button
-          ref={closeButtonRef}
-          type="button"
-          aria-label="사이드바 닫기"
-          onClick={() => closeMobileMenu()}
-          className="md:hidden p-1 rounded-lg text-muted hover:text-foreground hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
-        >
-          <CloseIcon />
-        </button>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-3 space-y-1.5 no-scrollbar">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface ${
-                isActive
-                  ? 'bg-accent text-white font-medium shadow-sm'
-                  : 'text-text-secondary hover:bg-surface-hover hover:text-foreground'
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          );
-        })}
-
-        <div className="my-3 border-t border-border pt-3">
-          <button
-            type="button"
-            onClick={() => setSeasonMenuOpen(open => !open)}
-            aria-expanded={seasonMenuOpen}
-            className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-sm transition-colors ${
-              pathname.startsWith('/seasons') ? 'text-accent' : 'text-text-secondary hover:bg-surface-hover hover:text-foreground'
-            }`}
-          >
-            <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 6.75h15M4.5 12h15m-15 5.25h15" />
-            </svg>
-            <span className="flex-1">Auction Seasons</span>
-            <svg className={`h-3.5 w-3.5 transition-transform ${seasonMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </button>
-
-          {seasonMenuOpen && (
-            <div className="ml-4 mt-1 border-l border-border pl-3">
-              <p className="px-2 pb-1.5 pt-2 text-[9px] font-mono uppercase tracking-[0.18em] text-muted">2026</p>
-              {auctionSeasons.map(season => {
-                const href = `/seasons/${season.id}`;
-                const isActive = pathname === href;
-                return (
-                  <Link
-                    key={season.id}
-                    href={href}
-                    className={`flex items-center gap-2 rounded-lg px-2 py-2 text-[11px] transition-colors ${
-                      isActive ? 'bg-accent/15 font-medium text-accent' : 'text-muted hover:bg-surface-hover hover:text-foreground'
-                    }`}
-                  >
-                    <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                      season.status === 'final' ? 'bg-green' : season.status === 'partial' ? 'bg-orange' : 'bg-accent'
-                    }`} />
-                    <span className="truncate">{season.label}</span>
-                  </Link>
-                );
-              })}
-              <Link
-                href="/seasons/compare"
-                className={`mt-1 flex items-center gap-2 rounded-lg px-2 py-2 text-[11px] transition-colors ${
-                  pathname === '/seasons/compare' ? 'bg-accent/15 font-medium text-accent' : 'text-muted hover:bg-surface-hover hover:text-foreground'
-                }`}
-              >
-                <span className="text-sm">↔</span>
-                Compare Seasons
-              </Link>
-            </div>
-          )}
-        </div>
-      </nav>
-
-      {/* Crawl Controls */}
-      <div className="px-4 pt-4 pb-2 border-t border-border space-y-2">
-        <div className="flex items-center justify-between gap-1.5">
-          {editingSchedule ? (
-            <div className="flex items-center gap-1 flex-1">
-              <input
-                ref={timeInputRef}
-                type="time"
-                value={tempTime}
-                onChange={e => setTempTime(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') saveSchedule(); if (e.key === 'Escape') setEditingSchedule(false); }}
-                className="flex-1 min-w-0 px-2 py-1 text-xs bg-background border border-accent rounded font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
-              />
-              <button onClick={saveSchedule} className="px-2 py-1 text-[10px] bg-accent text-background rounded font-medium hover:bg-accent/80 transition-colors shrink-0">저장</button>
-              <button onClick={() => setEditingSchedule(false)} className="px-1.5 py-1 text-[10px] text-muted hover:text-foreground transition-colors shrink-0">✕</button>
-            </div>
-          ) : (
-            <button
-              onClick={openScheduleEdit}
-              className="flex items-center gap-1.5 flex-1 min-w-0 px-2.5 py-1.5 text-[11px] bg-background border border-border rounded-lg text-text-secondary hover:border-border-light hover:text-foreground transition-all"
-            >
-              <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="truncate">매일 <span className="font-mono text-foreground">{scheduleTime}</span> KST</span>
-              <svg className="w-2.5 h-2.5 opacity-40 shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-            </button>
-          )}
-          <button
-            onClick={runCrawl}
-            disabled={crawling}
-            className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] bg-accent/10 border border-accent/30 rounded-lg text-accent hover:bg-accent/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-          >
-            {crawling ? (
-              <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-              </svg>
-            ) : (
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            )}
-            {crawling ? '크롤링 중' : '지금'}
-          </button>
-        </div>
-        {lastCrawled && !crawling && (
-          <p className="text-[9px] text-muted/70 font-mono truncate">마지막: {lastCrawled}</p>
-        )}
-      </div>
-
-      {/* Theme Toggle + Status */}
-      <div className="p-4 border-t border-border space-y-3">
-        <button
-          type="button"
-          onClick={toggleTheme}
-          aria-label={`${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-background border border-border hover:border-border-light transition-all group"
-        >
-          <div className="relative w-10 h-5 rounded-full bg-surface-hover border border-border-light transition-colors shrink-0">
-            <div
-              className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-300 flex items-center justify-center ${
-                theme === 'dark'
-                  ? 'left-0.5 bg-accent text-white'
-                  : 'left-[1.125rem] bg-accent text-white'
-              }`}
-            >
-              {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
-            </div>
-          </div>
-          <span className="text-xs text-text-secondary group-hover:text-foreground transition-colors">
-            {theme === 'dark' ? 'Dark' : 'Light'} Mode
-          </span>
-        </button>
-        <div>
-          <div className="flex items-center gap-2 text-xs text-muted">
-            <span className="w-2 h-2 rounded-full bg-green animate-pulse-dot shrink-0" />
-            Live Data Feed
-          </div>
-          <p className="text-[10px] text-muted mt-1.5 font-mono">Last updated: 2 min ago</p>
-        </div>
-        <p className="text-[9px] font-mono text-muted/40 text-right select-none">{VERSION}</p>
-      </div>
-    </>
-  );
+  const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   return (
     <>
-      {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-surface border-b border-border px-4 py-3 flex items-center justify-between">
-        <button
-          ref={menuButtonRef}
-          type="button"
-          onClick={() => setMobileOpen(true)}
-          aria-label="사이드바 열기"
-          aria-controls="mobile-sidebar"
-          aria-expanded={mobileOpen}
-          className="p-1.5 rounded-lg text-foreground hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
-        >
-          <HamburgerIcon />
-        </button>
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center">
-            <span className="text-white font-bold text-[10px]">LT</span>
+      <header className="sticky top-0 z-40 border-b border-border/80 bg-surface/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-[1240px] items-center gap-6 px-4 sm:px-6 lg:px-8">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="LunaArt Terminal 홈">
+            <span className="grid h-8 w-8 place-items-center rounded-xl bg-foreground text-sm font-black text-surface shadow-sm">L</span>
+            <span className="flex flex-col leading-none">
+              <span className="text-sm font-extrabold tracking-[-0.025em] text-foreground">LunaArt</span>
+              <span className="mt-1 text-[9px] font-bold tracking-[0.15em] text-muted">MARKET TERMINAL</span>
+            </span>
+          </Link>
+
+          <nav className="ml-auto hidden items-center gap-1 md:flex" aria-label="주요 메뉴">
+            {primaryNavigation.map(item => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  isActive(item.href) ? 'bg-surface-hover text-foreground' : 'text-text-secondary hover:bg-surface-hover hover:text-foreground'
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="group relative">
+              <Link
+                href={latestSeason ? `/seasons/${latestSeason.id}` : '/seasons/compare'}
+                className={`flex items-center gap-1 rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  pathname.startsWith('/seasons') ? 'bg-surface-hover text-foreground' : 'text-text-secondary hover:bg-surface-hover hover:text-foreground'
+                }`}
+              >
+                시즌 <span className="text-[10px] text-muted">⌄</span>
+              </Link>
+              <div className="invisible absolute right-0 top-full w-64 pt-2 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <div className="rounded-2xl border border-border bg-surface p-2 shadow-xl">
+                  {auctionSeasons.map(season => (
+                    <Link key={season.id} href={`/seasons/${season.id}`} className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-xs text-text-secondary hover:bg-surface-hover hover:text-foreground">
+                      <span className={`h-1.5 w-1.5 rounded-full ${season.status === 'final' ? 'bg-green' : season.status === 'partial' ? 'bg-orange' : 'bg-accent'}`} />
+                      <span className="flex-1 truncate">{season.label}</span>
+                      <span className="font-mono text-[9px] text-muted">{season.year}</span>
+                    </Link>
+                  ))}
+                  <Link href="/seasons/compare" className="mt-1 block border-t border-border px-3 pt-3 pb-2 text-xs font-semibold text-accent">시즌 비교 →</Link>
+                </div>
+              </div>
+            </div>
+          </nav>
+
+          <div className="ml-auto flex items-center gap-2 md:ml-3">
+            <span className="hidden items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-[10px] font-bold tracking-[0.08em] text-muted sm:flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-green animate-pulse-dot" /> LIVE DATA
+            </span>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={`${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`}
+              className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-surface text-text-secondary transition-colors hover:bg-surface-hover hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <ThemeIcon theme={theme} />
+            </button>
           </div>
-          <span className="text-sm font-bold text-foreground">LunaArt</span>
         </div>
-        <button
-          type="button"
-          onClick={toggleTheme}
-          aria-label={`${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`}
-          className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
-        >
-          {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
-        </button>
-      </div>
+      </header>
 
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <div
-          className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-          onClick={() => closeMobileMenu()}
-        />
-      )}
-
-      {/* Sidebar — mobile: slide-over drawer, desktop: fixed */}
-      <aside
-        id="mobile-sidebar"
-        ref={drawerRef}
-        role={mobileOpen ? 'dialog' : undefined}
-        aria-modal={mobileOpen ? true : undefined}
-        aria-labelledby="mobile-sidebar-title"
-        tabIndex={-1}
-        className={`
-          fixed md:relative z-50 md:z-auto
-          w-[270px] md:w-[236px] h-full
-          bg-surface border-r border-border
-          flex flex-col shrink-0
-          transition-transform duration-300 ease-in-out
-          ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
-      >
-        {sidebarContent}
-      </aside>
+      <nav className="mobile-bottom-safe fixed inset-x-0 bottom-0 z-50 grid grid-cols-4 border-t border-border/80 bg-surface/95 px-2 pt-1.5 backdrop-blur-xl md:hidden" aria-label="모바일 주요 메뉴">
+        {primaryNavigation.map(item => (
+          <Link key={item.href} href={item.href} className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold ${isActive(item.href) ? 'text-accent' : 'text-muted'}`}>
+            <span className={`grid h-5 min-w-5 place-items-center rounded-md px-1 text-[10px] font-black ${isActive(item.href) ? 'bg-accent text-white' : 'bg-surface-hover text-text-secondary'}`}>{item.mark}</span>
+            {item.shortLabel}
+          </Link>
+        ))}
+        <Link href={latestSeason ? `/seasons/${latestSeason.id}` : '/seasons/compare'} className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold ${pathname.startsWith('/seasons') ? 'text-accent' : 'text-muted'}`}>
+          <span className={`grid h-5 min-w-5 place-items-center rounded-md px-1 text-[10px] font-black ${pathname.startsWith('/seasons') ? 'bg-accent text-white' : 'bg-surface-hover text-text-secondary'}`}>↔</span>
+          시즌
+        </Link>
+      </nav>
     </>
   );
 }

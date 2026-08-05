@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import ThemeProvider from "@/components/ThemeProvider";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-const playfairDisplay = Playfair_Display({ variable: "--font-playfair", subsets: ["latin"] });
 
 const themeInitScript = `
 (() => {
@@ -28,13 +23,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ko" data-theme="dark" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}>
+    <html lang="ko" data-theme="light" suppressHydrationWarning>
+      <body className="antialiased">
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
-          <div className="flex h-screen overflow-hidden">
+          <div className="min-h-screen">
             <Sidebar />
-            <main className="flex-1 overflow-y-auto pt-[52px] md:pt-0">{children}</main>
+            <main className="pb-20 md:pb-0">{children}</main>
           </div>
         </ThemeProvider>
       </body>

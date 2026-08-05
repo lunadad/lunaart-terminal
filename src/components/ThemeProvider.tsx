@@ -10,7 +10,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'dark',
+  theme: 'light',
   toggleTheme: () => {},
 });
 
@@ -27,13 +27,13 @@ function isTheme(value: string | null): value is Theme {
 }
 
 function getInitialTheme(): Theme {
-  if (typeof document === 'undefined') return 'dark';
+  if (typeof document === 'undefined') return 'light';
   const current = document.documentElement.getAttribute('data-theme');
-  return isTheme(current) ? current : 'dark';
+  return isTheme(current) ? current : 'light';
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
