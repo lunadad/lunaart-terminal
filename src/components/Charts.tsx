@@ -57,7 +57,7 @@ export function MonthlyVolumeChart() {
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-black tracking-[-0.025em] text-foreground">현재 월 경매사 매출</h3>
+        <h3 className="text-lg font-bold tracking-[-0.025em] text-foreground">현재 월 경매사 매출</h3>
         <span className="text-[10px] text-muted font-mono">{data.monthLabel}</span>
       </div>
 
@@ -248,7 +248,7 @@ export function CategoryHeatmap() {
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-black tracking-[-0.025em] text-foreground">카테고리별 성과 히트맵</h3>
+        <h3 className="text-lg font-bold tracking-[-0.025em] text-foreground">카테고리별 성과 히트맵</h3>
         <span className="text-[10px] text-muted font-mono">타일 크기 ∝ USD 매출액</span>
       </div>
 

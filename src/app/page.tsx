@@ -123,8 +123,8 @@ export default function AuctionFeedPage() {
                   <span className="rounded-full border border-white/30 px-2.5 py-1">Top lot</span>
                   <span>{leadLot.auctionHouse.name} · Lot {leadLot.lotNumber}</span>
                 </div>
-                <h2 className="text-3xl font-black tracking-[-0.04em] sm:text-5xl">{leadLot.artist.name}</h2>
-                <p className="mt-2 line-clamp-1 text-sm text-white/80 sm:text-base">{leadLot.title}{leadLot.year ? `, ${leadLot.year}` : ''}</p>
+                <h2 className="editorial-serif text-4xl leading-[0.9] sm:text-6xl">{leadLot.artist.name}</h2>
+                <p className="editorial-italic mt-2 line-clamp-1 text-lg text-white/85 sm:text-xl">{leadLot.title}{leadLot.year ? `, ${leadLot.year}` : ''}</p>
                 <p className="mt-4 font-mono text-xl font-bold sm:text-2xl">{formatCurrency(leadLot.result.usdEquivalent || 0)} USD</p>
               </div>
             </a>
@@ -133,16 +133,16 @@ export default function AuctionFeedPage() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <div className="newbook-hero rounded-2xl border border-border p-5 sm:p-6">
               <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">Market brief</p>
-              <h2 className="mt-3 text-2xl font-black leading-tight tracking-[-0.035em] text-foreground">숫자보다 먼저,<br />시장의 방향을 읽으세요.</h2>
+              <h2 className="mt-3 text-2xl font-bold leading-tight tracking-[-0.035em] text-foreground">숫자보다 먼저,<br />시장의 방향을 읽으세요.</h2>
               <p className="mt-3 text-sm leading-6 text-text-secondary">Christie&apos;s와 Sotheby&apos;s의 최신 낙찰 결과, 가격 흐름, 작가 모멘텀을 한 화면에서 비교합니다.</p>
               <div className="mt-5 grid grid-cols-2 divide-x divide-border border-t border-border pt-4">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted">Tracked lots</p>
-                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-foreground">{filteredLots.length}</p>
+                  <p className="mt-1 text-2xl font-bold tracking-[-0.03em] text-foreground">{filteredLots.length}</p>
                 </div>
                 <div className="pl-4">
                   <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted">Volume</p>
-                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-foreground">${formatCurrency(pulse.totalVolume)}</p>
+                  <p className="mt-1 text-2xl font-bold tracking-[-0.03em] text-foreground">${formatCurrency(pulse.totalVolume)}</p>
                 </div>
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function AuctionFeedPage() {
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">At auction</p>
-            <h2 className="mt-1 text-2xl font-black tracking-[-0.035em] text-foreground md:text-3xl">최근 낙찰 결과</h2>
+            <h2 className="mt-1 text-2xl font-bold tracking-[-0.035em] text-foreground md:text-3xl">최근 낙찰 결과</h2>
           </div>
           <p className="text-xs text-muted">{filteredLots.length} lots</p>
         </div>

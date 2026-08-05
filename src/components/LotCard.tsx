@@ -58,10 +58,10 @@ export default function LotCard({ lot }: Props) {
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="text-base font-extrabold leading-tight tracking-[-0.02em] text-foreground group-hover:text-accent">
+            <h3 className="editorial-serif text-xl leading-none text-foreground group-hover:text-accent">
               {lot.artist.name}
             </h3>
-            <p className="mt-1 truncate text-sm italic text-text-secondary">
+            <p className="editorial-italic mt-1 truncate text-base text-text-secondary">
               {lot.title}{lot.year ? `, ${lot.year}` : ''}
             </p>
           </div>

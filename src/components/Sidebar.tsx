@@ -37,7 +37,7 @@ export default function Sidebar() {
           <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="LunaArt Terminal 홈">
             <span className="grid h-8 w-8 place-items-center rounded-xl bg-foreground text-sm font-black text-surface shadow-sm">L</span>
             <span className="flex flex-col leading-none">
-              <span className="text-sm font-extrabold tracking-[-0.025em] text-foreground">LunaArt</span>
+              <span className="editorial-serif text-lg leading-none text-foreground">LunaArt</span>
               <span className="mt-1 text-[9px] font-bold tracking-[0.15em] text-muted">MARKET TERMINAL</span>
             </span>
           </Link>

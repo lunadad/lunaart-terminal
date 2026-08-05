@@ -58,7 +58,7 @@ export default function MarketPulseBar({ pulse, houseBreakdown = [] }: Props) {
         {metrics.map((m) => (
           <div key={m.label} className="min-w-0 space-y-1 border-b border-r hairline p-4 transition-colors hover:bg-surface-hover last:border-r-0 lg:border-b-0 md:p-5">
             <p className="text-[10px] md:text-xs text-muted uppercase tracking-wider">{m.label}</p>
-            <p className={`text-xl lg:text-2xl font-black tracking-[-0.035em] ${m.color} truncate`}>{m.value}</p>
+            <p className={`text-xl lg:text-2xl font-bold tracking-[-0.035em] ${m.color} truncate`}>{m.value}</p>
             <p className="text-[10px] md:text-xs text-text-secondary">{m.sub}</p>
           </div>
         ))}

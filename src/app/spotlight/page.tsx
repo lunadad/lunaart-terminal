@@ -86,7 +86,7 @@ export default function SpotlightPage() {
       {/* Header */}
       <div>
         <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Artist intelligence</p>
-        <h1 className="mt-1 text-2xl font-black tracking-[-0.04em] text-foreground md:text-3xl">Spotlight Dashboard</h1>
+        <h1 className="editorial-serif mt-1 text-4xl leading-none text-foreground md:text-5xl">Spotlight Dashboard</h1>
         <p className="text-xs md:text-sm text-muted mt-0.5">주목 작가 &middot; 작품 인사이트</p>
       </div>
 

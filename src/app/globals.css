@@ -8,6 +8,24 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/CormorantGaramond-Latin.woff2") format("woff2");
+  font-weight: 500 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/CormorantGaramond-Italic-Latin.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
   /* Tailwind v4: @theme (not inline) generates var() references in utilities */
   --color-background: var(--th-background);
@@ -27,7 +45,7 @@
   --color-text-secondary: var(--th-text-secondary);
   --font-sans: "Pretendard Variable", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-serif: Georgia, "Times New Roman", serif;
+  --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
 }
 
 /* ── Dark theme (default) ── */
@@ -81,6 +99,8 @@ body {
   color: var(--th-foreground);
   font-family: "Pretendard Variable", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -98,8 +118,25 @@ body {
 }
 
 .display-serif {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Cormorant Garamond", "Pretendard Variable", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
 }
+
+.editorial-serif {
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.editorial-italic {
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+h1, h2, h3 { text-wrap: balance; }
 
 .newbook-hero {
   background:

@@ -11,7 +11,7 @@ export default function SpotlightArtists({ artists }: Props) {
   return (
     <div className="rounded-2xl border border-border bg-surface p-3 md:p-5">
       <div className="flex items-center justify-between mb-3 md:mb-4">
-        <h3 className="text-base font-black tracking-[-0.025em] text-foreground md:text-lg">오늘 주목 작가 5인</h3>
+        <h3 className="text-base font-bold tracking-[-0.025em] text-foreground md:text-lg">오늘 주목 작가 5인</h3>
         <span className="text-[10px] text-muted font-mono">RISING ARTISTS</span>
       </div>
       <div className="space-y-2 md:space-y-3">
@@ -25,7 +25,7 @@ export default function SpotlightArtists({ artists }: Props) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-                <h4 className="truncate text-sm font-extrabold tracking-[-0.02em] text-foreground md:text-base">{ra.artist.name}</h4>
+                <h4 className="editorial-serif truncate text-lg leading-none text-foreground md:text-xl">{ra.artist.name}</h4>
                 <span className="px-1.5 py-0.5 rounded bg-green/10 text-green text-[10px] font-mono font-medium shrink-0">
                   +{ra.momentum.toFixed(0)}%
                 </span>
