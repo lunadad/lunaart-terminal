@@ -23,7 +23,7 @@ export default function LotCard({ lot }: Props) {
       className="group block min-w-0 overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-border-light hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-background"
     >
       <div
-        className={`relative aspect-square overflow-hidden bg-surface ${
+        className={`relative aspect-[4/3] overflow-hidden bg-surface ${
           lot.auctionHouseId === 'christies'
             ? 'bg-[linear-gradient(135deg,#f0a45d,#672d45)]'
             : 'bg-[linear-gradient(135deg,#b7c65a,#21334b)]'

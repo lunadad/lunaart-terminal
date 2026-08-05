@@ -73,21 +73,21 @@ export default async function AuctionSeasonPage({ params }: { params: Promise<{ 
   const status = seasonStatusMeta[season.status];
 
   return (
-    <div className="mx-auto max-w-[1500px] space-y-8 p-4 pb-16 md:p-8 lg:p-10">
+    <div className="mx-auto max-w-5xl space-y-8 px-4 pb-16 pt-6 sm:px-6 sm:py-10">
       <SeasonSelector currentId={season.id} />
 
-      <header className="newbook-hero overflow-hidden rounded-[28px] border border-border p-6 md:rounded-[34px] md:p-10">
+      <header className="newbook-hero overflow-hidden rounded-[28px] border border-border p-6 sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted">Auction season archive</p>
           <span className={`rounded-full border px-3 py-1.5 text-[10px] font-semibold tracking-[0.14em] ${statusClasses[season.status]}`}>
             {status.label}
           </span>
         </div>
-        <div className="mt-9 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+        <div className="mt-8 grid gap-6 md:grid-cols-[minmax(0,1fr)_300px] md:items-end">
           <div>
             <p className="text-sm text-muted">{season.year} · {season.dateRange}</p>
-            <h1 className="display-serif mt-2 text-5xl leading-none text-foreground md:text-7xl">{season.city}</h1>
-            <p className="mt-5 max-w-2xl text-sm leading-6 text-text-secondary md:text-base">{season.description}</p>
+            <h1 className="display-serif mt-2 text-3xl leading-none text-foreground sm:text-4xl">{season.city}</h1>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-text-secondary">{season.description}</p>
           </div>
           <div className="rounded-2xl border border-border bg-background/60 p-5 backdrop-blur">
             <p className="text-xs font-medium text-foreground">Snapshot policy</p>
@@ -112,7 +112,7 @@ export default async function AuctionSeasonPage({ params }: { params: Promise<{ 
           <section>
             <div className="mb-5">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted">Season snapshot</p>
-              <h2 className="display-serif mt-2 text-3xl text-foreground">Market at a glance</h2>
+              <h2 className="display-serif mt-1 text-xl text-foreground sm:text-2xl">Market at a glance</h2>
             </div>
             <div className="grid grid-cols-2 overflow-hidden rounded-[22px] border border-border bg-surface lg:grid-cols-4">
               {[

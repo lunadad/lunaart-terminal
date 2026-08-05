@@ -34,10 +34,10 @@ export default function SeasonComparePage() {
   ];
 
   return (
-    <div className="mx-auto max-w-[1300px] space-y-8 p-4 pb-16 md:p-8 lg:p-10">
-      <header className="newbook-hero rounded-[28px] border border-border p-6 md:rounded-[34px] md:p-10">
+    <div className="mx-auto max-w-5xl space-y-8 px-4 pb-16 pt-6 sm:px-6 sm:py-10">
+      <header className="newbook-hero rounded-[28px] border border-border p-6 sm:p-8">
         <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted">Auction season archive</p>
-        <h1 className="display-serif mt-3 text-4xl text-foreground md:text-6xl">Compare seasons</h1>
+        <h1 className="display-serif mt-2 text-2xl text-foreground sm:text-4xl">Compare seasons</h1>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-text-secondary">Only lots explicitly locked to each season are compared. Global feed updates never change these selections automatically.</p>
       </header>
 

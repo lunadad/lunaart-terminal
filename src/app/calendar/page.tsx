@@ -825,14 +825,14 @@ export default function CalendarPage() {
   const sothebysCount = filtered.filter(a => a.house === 'sothebys').length;
 
   return (
-    <div className="p-4 pb-16 sm:p-6 lg:p-8">
+    <div className="px-4 pb-16 pt-6 sm:px-6 sm:py-10">
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* ── Header ── */}
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Upcoming sales</p>
-            <h1 className="editorial-serif mt-1 text-4xl leading-none text-foreground md:text-5xl">Auction Calendar</h1>
+            <h1 className="editorial-serif mt-1 text-xl leading-none text-foreground sm:text-2xl">Auction Calendar</h1>
             <p className="text-xs text-muted mt-0.5">
               Fine art auction schedule through December 2026 · Christie&apos;s &amp; Sotheby&apos;s
             </p>

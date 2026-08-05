@@ -82,12 +82,12 @@ export default function SpotlightPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-[1240px] space-y-5 p-4 pb-16 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-5xl space-y-6 px-4 pb-16 pt-6 sm:px-6 sm:py-10">
       {/* Header */}
       <div>
         <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Artist intelligence</p>
-        <h1 className="editorial-serif mt-1 text-4xl leading-none text-foreground md:text-5xl">Spotlight Dashboard</h1>
-        <p className="text-xs md:text-sm text-muted mt-0.5">주목 작가 &middot; 작품 인사이트</p>
+        <h1 className="editorial-serif mt-1 text-xl leading-none text-foreground sm:text-2xl">Spotlight Dashboard</h1>
+        <p className="mt-1 text-xs text-muted sm:text-sm">주목 작가 &middot; 작품 인사이트</p>
       </div>
 
       {/* Tab Navigation */}

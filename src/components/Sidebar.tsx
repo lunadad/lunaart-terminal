@@ -33,7 +33,7 @@ export default function Sidebar() {
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-border/80 bg-surface/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-[1240px] items-center gap-6 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-5xl items-center gap-6 px-4 sm:px-6">
           <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="LunaArt Terminal 홈">
             <span className="grid h-8 w-8 place-items-center rounded-xl bg-foreground text-sm font-black text-surface shadow-sm">L</span>
             <span className="flex flex-col leading-none">
