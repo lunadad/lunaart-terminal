@@ -8,24 +8,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "Metropolis";
-  src: url("/fonts/Metropolis-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Metropolis";
-  src: url("/fonts/Metropolis-MediumItalic.woff2") format("woff2");
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 @theme {
   /* Tailwind v4: @theme (not inline) generates var() references in utilities */
   --color-background: var(--th-background);
@@ -45,7 +27,7 @@
   --color-text-secondary: var(--th-text-secondary);
   --font-sans: "Pretendard Variable", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-serif: "Metropolis", "Pretendard Variable", sans-serif;
+  --font-serif: "Pretendard Variable", system-ui, sans-serif;
 }
 
 /* ── Dark theme (default) ── */
@@ -111,29 +93,29 @@ body {
 
 .editorial-display {
   font-family: "Pretendard Variable", sans-serif;
-  font-size: clamp(2.25rem, 5vw, 4.75rem);
-  line-height: 0.98;
-  letter-spacing: -0.055em;
-  font-weight: 850;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 750;
 }
 
 .display-serif {
-  font-family: "Metropolis", "Pretendard Variable", sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.045em;
+  font-family: "Pretendard Variable", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 .editorial-serif {
-  font-family: "Metropolis", "Pretendard Variable", sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.055em;
+  font-family: "Pretendard Variable", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 .editorial-italic {
-  font-family: "Metropolis", "Pretendard Variable", sans-serif;
+  font-family: "Pretendard Variable", sans-serif;
   font-style: italic;
-  font-weight: 500;
-  letter-spacing: -0.035em;
+  font-weight: 450;
+  letter-spacing: -0.015em;
 }
 
 h1, h2, h3 { text-wrap: balance; }

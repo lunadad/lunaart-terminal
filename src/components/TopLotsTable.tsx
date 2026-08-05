@@ -41,7 +41,7 @@ export default function TopLotsTable({ lots }: Props) {
                   className="border-b border-border/50 hover:bg-surface-hover focus-within:bg-surface-hover transition-colors"
                 >
                   <td className="py-2.5 px-2 text-muted font-mono">{i + 1}</td>
-                  <td className="editorial-serif py-2.5 px-2 text-base leading-none text-foreground">{lot.artist.name}</td>
+                  <td className="editorial-serif py-2.5 px-2 text-sm leading-snug text-foreground">{lot.artist.name}</td>
                   <td className="py-2.5 px-2 text-text-secondary italic max-w-[200px]">
                     <a
                       href={lot.lotUrl}

@@ -86,7 +86,7 @@ export default async function AuctionSeasonPage({ params }: { params: Promise<{ 
         <div className="mt-8 grid gap-6 md:grid-cols-[minmax(0,1fr)_300px] md:items-end">
           <div>
             <p className="text-sm text-muted">{season.year} · {season.dateRange}</p>
-            <h1 className="display-serif mt-2 text-3xl leading-none text-foreground sm:text-4xl">{season.city}</h1>
+            <h1 className="display-serif mt-2 text-2xl leading-tight text-foreground sm:text-3xl">{season.city}</h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-text-secondary">{season.description}</p>
           </div>
           <div className="rounded-2xl border border-border bg-background/60 p-5 backdrop-blur">
@@ -112,7 +112,7 @@ export default async function AuctionSeasonPage({ params }: { params: Promise<{ 
           <section>
             <div className="mb-5">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted">Season snapshot</p>
-              <h2 className="display-serif mt-1 text-xl text-foreground sm:text-2xl">Market at a glance</h2>
+              <h2 className="display-serif mt-1 text-lg text-foreground sm:text-xl">Market at a glance</h2>
             </div>
             <div className="grid grid-cols-2 overflow-hidden rounded-[22px] border border-border bg-surface lg:grid-cols-4">
               {[
@@ -123,7 +123,7 @@ export default async function AuctionSeasonPage({ params }: { params: Promise<{ 
               ].map(([label, value]) => (
                 <div key={label} className="border-b border-r border-border p-5 last:border-r-0 lg:border-b-0 md:p-6">
                   <p className="text-[10px] uppercase tracking-[0.16em] text-muted">{label}</p>
-                  <p className="mt-2 text-2xl font-semibold text-foreground md:text-3xl">{value}</p>
+                  <p className="mt-2 text-xl font-semibold text-foreground md:text-2xl">{value}</p>
                 </div>
               ))}
             </div>
@@ -141,7 +141,7 @@ export default async function AuctionSeasonPage({ params }: { params: Promise<{ 
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <p className="text-xs text-muted">{house.name}</p>
-                        <p className="mt-1 text-2xl font-semibold text-foreground">${formatCurrency(house.pulse.totalVolume)}</p>
+                        <p className="mt-1 text-xl font-semibold text-foreground">${formatCurrency(house.pulse.totalVolume)}</p>
                       </div>
                       <p className="text-right font-mono text-xs text-muted">{house.pulse.soldLots}/{house.pulse.totalLots} sold</p>
                     </div>
@@ -218,14 +218,14 @@ export default async function AuctionSeasonPage({ params }: { params: Promise<{ 
       ) : (
         <section className="rounded-[22px] border border-accent/25 bg-accent/5 px-6 py-12 text-center">
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-accent">Results pending</p>
-          <h2 className="display-serif mt-3 text-3xl text-foreground">This season is isolated and ready.</h2>
+          <h2 className="display-serif mt-3 text-xl text-foreground sm:text-2xl">This season is isolated and ready.</h2>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted">Results will appear here only after they are verified and explicitly attached to this season. Later market records will never be included automatically.</p>
         </section>
       )}
 
       <section className="rounded-[22px] border border-border bg-surface p-5 md:p-6">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <div><p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted">Included sales</p><h2 className="display-serif mt-2 text-2xl text-foreground">Auction line-up</h2></div>
+          <div><p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted">Included sales</p><h2 className="display-serif mt-2 text-xl text-foreground">Auction line-up</h2></div>
           <p className="font-mono text-[10px] text-muted">{season.auctions.length} auctions</p>
         </div>
         <div className="space-y-2">

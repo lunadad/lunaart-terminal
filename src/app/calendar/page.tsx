@@ -832,7 +832,7 @@ export default function CalendarPage() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Upcoming sales</p>
-            <h1 className="editorial-serif mt-1 text-xl leading-none text-foreground sm:text-2xl">Auction Calendar</h1>
+            <h1 className="editorial-serif mt-1 text-lg leading-tight text-foreground sm:text-xl">Auction Calendar</h1>
             <p className="text-xs text-muted mt-0.5">
               Fine art auction schedule through December 2026 · Christie&apos;s &amp; Sotheby&apos;s
             </p>

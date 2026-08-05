@@ -86,7 +86,7 @@ export default function SpotlightPage() {
       {/* Header */}
       <div>
         <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Artist intelligence</p>
-        <h1 className="editorial-serif mt-1 text-xl leading-none text-foreground sm:text-2xl">Spotlight Dashboard</h1>
+        <h1 className="editorial-serif mt-1 text-lg leading-tight text-foreground sm:text-xl">Spotlight Dashboard</h1>
         <p className="mt-1 text-xs text-muted sm:text-sm">주목 작가 &middot; 작품 인사이트</p>
       </div>
 
@@ -118,7 +118,7 @@ export default function SpotlightPage() {
             >
               <div className="flex items-start gap-3 md:gap-5">
                 <div className="w-9 h-9 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-accent/30 to-purple/30 flex items-center justify-center shrink-0">
-                  <span className="text-base md:text-xl font-bold text-accent">{i + 1}</span>
+                  <span className="text-sm md:text-lg font-bold text-accent">{i + 1}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">

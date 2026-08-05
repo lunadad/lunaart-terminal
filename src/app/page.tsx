@@ -96,7 +96,7 @@ export default function AuctionFeedPage() {
     <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
       <header className="pt-6 sm:pt-10">
         <div className="flex items-end justify-between gap-4">
-          <p className="editorial-serif text-xl leading-none text-foreground sm:text-2xl">TODAY&apos;S MARKET SIGNAL</p>
+          <p className="editorial-serif text-lg leading-tight text-foreground sm:text-xl">TODAY&apos;S MARKET SIGNAL</p>
           <p className="hidden text-sm text-text-secondary sm:block">데이터 기준 {latestDate}</p>
         </div>
         <p className="mt-2 text-sm text-text-secondary sm:hidden">데이터 기준 {latestDate}</p>
@@ -118,9 +118,9 @@ export default function AuctionFeedPage() {
             <span className="absolute left-4 top-4 rounded-full border border-white/70 bg-white/85 px-3.5 py-2 text-xs font-bold text-[#18201c] shadow-sm backdrop-blur sm:left-6 sm:top-6 sm:text-sm">Top lot · {leadLot.auctionHouse.name}</span>
             <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
               <p className="text-xs font-medium text-white/75">LOT {leadLot.lotNumber} · {leadLot.saleEvent.city}</p>
-              <h2 className="editorial-serif mt-1 text-3xl leading-none sm:text-5xl">{leadLot.artist.name}</h2>
-              <p className="editorial-italic mt-1.5 line-clamp-1 text-base text-white/85 sm:text-lg">{leadLot.title}{leadLot.year ? `, ${leadLot.year}` : ''}</p>
-              <p className="mt-3 font-mono text-base font-bold sm:text-xl">{formatCurrency(leadLot.result.usdEquivalent || 0)} USD</p>
+              <h2 className="editorial-serif mt-1 text-2xl leading-tight sm:text-4xl">{leadLot.artist.name}</h2>
+              <p className="editorial-italic mt-1 line-clamp-1 text-sm text-white/85 sm:text-base">{leadLot.title}{leadLot.year ? `, ${leadLot.year}` : ''}</p>
+              <p className="mt-2.5 font-mono text-sm font-bold sm:text-lg">{formatCurrency(leadLot.result.usdEquivalent || 0)} USD</p>
             </div>
           </a>
         ) : null}
@@ -132,11 +132,11 @@ export default function AuctionFeedPage() {
           <div className="mt-3 grid grid-cols-2 divide-x divide-border">
             <div>
               <p className="text-[11px] font-medium text-muted">Tracked lots</p>
-              <p className="mt-1 text-xl font-bold tracking-[-0.03em] text-foreground">{filteredLots.length}</p>
+              <p className="mt-1 text-lg font-bold tracking-[-0.02em] text-foreground">{filteredLots.length}</p>
             </div>
             <div className="pl-4">
               <p className="text-[11px] font-medium text-muted">Volume</p>
-              <p className="mt-1 text-xl font-bold tracking-[-0.03em] text-foreground">${formatCurrency(pulse.totalVolume)}</p>
+              <p className="mt-1 text-lg font-bold tracking-[-0.02em] text-foreground">${formatCurrency(pulse.totalVolume)}</p>
             </div>
           </div>
         </div>
@@ -164,7 +164,7 @@ export default function AuctionFeedPage() {
       <section className="py-9 sm:py-12">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <p className="editorial-serif text-xl leading-none text-foreground sm:text-2xl">Market overview</p>
+            <p className="editorial-serif text-lg leading-tight text-foreground sm:text-xl">Market overview</p>
           </div>
           <p className="hidden text-right text-xs text-muted md:block">Filtered in real time</p>
         </div>
@@ -189,7 +189,7 @@ export default function AuctionFeedPage() {
       <section className="border-t hairline py-9 sm:py-12">
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
-            <p className="editorial-serif text-xl leading-none text-foreground sm:text-2xl">At auction</p>
+            <p className="editorial-serif text-lg leading-tight text-foreground sm:text-xl">At auction</p>
           </div>
           <p className="text-xs text-muted">{filteredLots.length} lots</p>
         </div>
@@ -200,7 +200,7 @@ export default function AuctionFeedPage() {
           </div>
         ) : (
           <div className="border-y hairline py-20 text-center">
-            <p className="text-xl text-foreground">조건에 맞는 낙찰 결과가 없습니다.</p>
+            <p className="text-base font-medium text-foreground">조건에 맞는 낙찰 결과가 없습니다.</p>
             <button
               type="button"
               onClick={() => {

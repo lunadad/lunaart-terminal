@@ -25,7 +25,7 @@ export default function SpotlightArtists({ artists }: Props) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-                <h4 className="editorial-serif truncate text-lg leading-none text-foreground md:text-xl">{ra.artist.name}</h4>
+                <h4 className="editorial-serif truncate text-base leading-snug text-foreground md:text-lg">{ra.artist.name}</h4>
                 <span className="px-1.5 py-0.5 rounded bg-green/10 text-green text-[10px] font-mono font-medium shrink-0">
                   +{ra.momentum.toFixed(0)}%
                 </span>

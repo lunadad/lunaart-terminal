@@ -77,7 +77,7 @@ export function MonthlyVolumeChart() {
                 <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: palette.marker }} />
               </div>
               <div>
-                <p className="text-2xl md:text-3xl font-bold font-mono tracking-normal">
+                <p className="text-xl md:text-2xl font-bold font-mono tracking-normal">
                   ${formatCurrency(house.volume)}
                 </p>
                 <div className="mt-3 grid grid-cols-2 gap-2">
@@ -193,7 +193,7 @@ function TileContent({
       {/* Sell-through — large tiles show inline, small tiles on hover */}
       {isLarge ? (
         <>
-          <p className={`font-bold font-mono mt-1 ${isLarge ? 'text-2xl' : 'text-lg'}`}>
+          <p className={`font-bold font-mono mt-1 ${isLarge ? 'text-xl' : 'text-base'}`}>
             {d.sellThrough}%
           </p>
           <p className="text-[10px] opacity-55 mt-0.5">낙찰률</p>

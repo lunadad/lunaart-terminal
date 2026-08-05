@@ -37,7 +37,7 @@ export default function SeasonComparePage() {
     <div className="mx-auto max-w-5xl space-y-8 px-4 pb-16 pt-6 sm:px-6 sm:py-10">
       <header className="newbook-hero rounded-[28px] border border-border p-6 sm:p-8">
         <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted">Auction season archive</p>
-        <h1 className="display-serif mt-2 text-2xl text-foreground sm:text-4xl">Compare seasons</h1>
+        <h1 className="display-serif mt-2 text-xl text-foreground sm:text-3xl">Compare seasons</h1>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-text-secondary">Only lots explicitly locked to each season are compared. Global feed updates never change these selections automatically.</p>
       </header>
 
@@ -82,7 +82,7 @@ export default function SeasonComparePage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[10px] font-mono uppercase tracking-[0.16em] text-muted">Top result</p>
-                <h2 className="display-serif mt-2 text-2xl text-foreground">{item.season.city}</h2>
+                <h2 className="display-serif mt-2 text-xl text-foreground">{item.season.city}</h2>
               </div>
               <Link href={`/seasons/${item.season.id}`} className="text-xs text-accent hover:underline">Open season →</Link>
             </div>
@@ -90,7 +90,7 @@ export default function SeasonComparePage() {
               <div className="mt-6 rounded-2xl bg-background p-4">
                 <p className="text-sm font-medium text-foreground">{item.topLot.artist.name}</p>
                 <p className="mt-1 truncate text-xs italic text-muted">{item.topLot.title}</p>
-                <p className="mt-4 font-mono text-xl font-semibold text-green">${item.topLot.result.usdEquivalent?.toLocaleString()}</p>
+                <p className="mt-4 font-mono text-lg font-semibold text-green">${item.topLot.result.usdEquivalent?.toLocaleString()}</p>
               </div>
             ) : (
               <div className="mt-6 rounded-2xl border border-accent/20 bg-accent/5 p-5 text-sm text-muted">Results have not been locked for this season.</div>
