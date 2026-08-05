@@ -97,7 +97,7 @@ export default function AuctionFeedPage() {
       <header className="pt-7 sm:pt-10">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-extrabold tracking-[0.12em] text-accent">TODAY&apos;S MARKET SIGNAL</p>
+            <p className="editorial-serif text-3xl leading-none text-accent sm:text-4xl">TODAY&apos;S MARKET SIGNAL</p>
           </div>
           <p className="hidden text-sm text-text-secondary sm:block">데이터 기준 {latestDate}</p>
         </div>
@@ -179,7 +179,7 @@ export default function AuctionFeedPage() {
       <section className="py-10 md:py-12">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Market overview</p>
+            <p className="editorial-serif text-3xl leading-none text-accent md:text-4xl">Market overview</p>
           </div>
           <p className="hidden text-right text-xs text-muted md:block">Filtered in real time</p>
         </div>
@@ -204,7 +204,7 @@ export default function AuctionFeedPage() {
       <section className="border-t hairline py-10 md:py-12">
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">At auction</p>
+            <p className="editorial-serif text-3xl leading-none text-accent md:text-4xl">At auction</p>
           </div>
           <p className="text-xs text-muted">{filteredLots.length} lots</p>
         </div>
