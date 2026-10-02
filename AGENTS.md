@@ -1,45 +1,69 @@
 <claude-mem-context>
 # Memory Context
 
-# [lunaart-terminal-main] recent context, 2026-05-10 7:57pm GMT+9
+# [lunaart-terminal-main] recent context, 2026-08-05 4:15pm GMT+9
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 30 obs (7,082t read) | 548,977t work | 99% savings
+Stats: 50 obs (14,085t read) | 1,335,148t work | 99% savings
 
-### May 10, 2026
-89 11:00a 🔴 ESLint errors fixed in lunaart-terminal-main components
-90 " 🔵 Next.js build fails due to Google Fonts network unavailability
-91 " 🟣 UI improvement plan queued for lunaart-terminal-main
-92 2:16p 🔴 lunaart-terminal-main passes lint and build after ESLint fixes
-93 4:46p 🔵 lunaart-terminal-main Project Structure Identified
-94 " 🔵 lunaart-terminal Tech Stack and Static Export Configuration
-95 " 🔴 Next.js Dev Server Port 3000 EPERM Fixed with Escalated Permissions
-96 4:47p 🔵 Codex browser-use Plugin Loaded to Open Dev Server Preview
-97 " 🟣 LunaArt Terminal App Previewed at localhost:3000/lunaart-terminal
-98 4:53p 🔵 lunaart-terminal 프로젝트 경로 혼동 해소
-99 " 🔵 lunaart-terminal 프로젝트 두 위치에 존재, Downloads 버전은 git 미초기화
-100 " 🔵 lunaart-terminal: Downloads 버전이 완전한 소스, workspace 버전은 불완전
-101 4:54p ✅ rsync 완료: lunaart-terminal 전체 소스가 workspace에 성공적으로 복사됨
-102 4:55p 🔵 lunaart-terminal 프로젝트 기술 스택 확인: art-terminal, Next.js 16 + React 19
-103 4:56p 🔵 npm run dev 실행 시 포트 3000 EPERM 오류로 서버 시작 실패
-104 " 🟣 art-terminal 개발 서버 포트 3000에서 정상 기동
-105 " 🟣 art-terminal 개발 서버 677ms 내에 Ready 상태 확인
-106 " 🔵 Codex 인앱 브라우저에서 localhost:3000 접근이 보안 정책으로 차단됨
-107 " 🔵 art-terminal 앱 소스 구조 및 데이터 모델 전체 파악
-108 " 🔵 localhost:3000 접속 시 404 오류 발생 — Next.js 메인 페이지 미서빙
-109 7:14p 🔵 404 원인 확인: next.config.ts에 output:'export' + basePath:'/lunaart-terminal' 설정
-110 " 🔵 page.tsx 데이터 모델 대폭 업그레이드 — Lot 스키마가 중첩 구조로 변경됨
-111 7:19p 🔵 dev 서버 프로세스 충돌: 포트 3000 선점 + .next/dev/lock 경합
-112 " 🔴 next.config.ts: 개발 환경에서 basePath 조건부 적용으로 localhost:3000 404 수정
-113 7:20p 🔵 PID 85497이 포트 3000과 .next/dev/lock을 보유한 채 실행 중 — 이미 유효한 dev 서버 존재
-114 " 🔵 kill 85497 성공했으나 .next/dev/lock 파일이 남아 새 dev 서버 재시작 여전히 실패
-115 7:29p 🔵 kill 85497 성공 후에도 .next/dev/lock을 PID 85497이 계속 점유 — 좀비 상태 또는 샌드박스 kill 제한
-116 " 🔵 SIGKILL(-9)로 PID 85497 완전 종료 — lock 파일과 포트 3000 모두 해제 성공
-118 " 🔵 localhost:3000이 HTTP 200 반환 확인됐으나 브라우저에서는 여전히 404 — page.tsx와 mock-data.ts 스키마 불일치가 원인
-117 7:30p 🔴 art-terminal 개발 서버 localhost:3000에서 정상 접속 가능 상태로 복구 완료
+### May 21, 2026
+251 11:20p 🟣 May 2026 Auction Data Crawl Script Created
+254 11:53p 🟣 Christie's May 2026 NY Auction Results Crawled and Saved
+255 " 🔵 Sotheby's May 2026 Results Hidden Behind Paywall
+256 " 🔵 Christie's Data Integrity Validated — All 1080 Lots Clean
+257 " ✅ Next.js Production Build Passes After May Data Update
+258 " 🔵 Christie's May 2026 NY Week — Per-Sale Volume Breakdown
+259 11:54p 🔴 Crawl Script Guards Against Wiping Data on Total Fetch Failure
+### May 22, 2026
+260 11:08a 🔵 May Auction Data Already Deployed to GitHub Pages via PR Merge
+261 " ⚖️ Plan to Add Per-Auction-House Volume Breakdown to Homepage
+262 11:12a 🟣 Auction House Breakdown Widget Deployed to GitHub Pages
+263 " 🟣 Monthly Revenue Chart Replaced with Current-Month Heatmap Comparison
+264 " 🔵 PIDs Targeted for Kill Included the Codex App Itself
+### May 26, 2026
+273 11:09p 🔵 루나 아트 터미널 프로젝트 구조 파악
+276 " 🟣 루나 아트 터미널 2.0 클론 생성 완료
+278 " 🔵 루나 아트 터미널 2.0 클론 상태 확인 — origin이 로컬 경로를 가리킴
+279 " 🔴 루나 아트 터미널 2.0 클론 origin remote를 GitHub로 수정
+282 11:10p 🔵 클론 폴더명 확인 — 한글 경로만 존재, ASCII 대체 경로 없음
+283 " ✅ 클론 폴더명 한글 → ASCII로 변경
+### Jul 25, 2026
+924 4:35p 🔵 Christie's July 2026 Page Uses Different window.chrComponents Structure
+925 " 🔵 Artsy.net Homepage UX Architecture Analyzed via Browser Automation
+926 " ⚖️ LunaArt UX Upgrade Scope Expanded to Include Artsy-Inspired Redesign
+932 4:38p 🔵 npm run crawl Succeeded — Christie's 163 Lots (129 Sold), Sotheby's 161 Hidden Records
+933 " 🔵 Christie's July 2026 Lot Search API: POST /sale/searchLots with Sale ID 3974, 2 Pages
+934 4:39p 🔵 Christie's July 2026 HTML Successfully Parsed: 84 Lots (Page 1), 142 Total Across 2 Pages
+935 " 🔵 Christie's /sale/searchLots API Returned 0 Bytes — Requires Auth Headers
+936 " 🔵 Artsy Homepage Screenshot Captured — Full UX Structure Documented for LunaArt Redesign
+### Aug 5, 2026
+1366 1:59p 🔵 lunaart-terminal-main Project Structure Identified
+1367 " 🔵 LunaArt Terminal Current Design System Fully Mapped
+1368 2:00p 🔵 artnews-daily.vercel.app Design System Successfully Extracted
+1369 2:05p ✅ UI 개선 작업 요청 - artnews-daily.vercel.app 참고
+1371 " 🟣 Sidebar를 상단 헤더 + 모바일 하단 탭바 구조로 전면 재설계
+1372 " ✅ globals.css 폰트·컬러 팔레트·CSS 전반 개편
+1373 " 🟣 메인 페이지 히어로 섹션을 에디토리얼 그리드 레이아웃으로 전면 재설계
+1370 2:06p ✅ Pretendard 가변 폰트 다운로드 및 프로젝트 추가
+1374 " 🔄 컴포넌트 전반 display-serif 제거 및 rounded-[22px] → rounded-2xl 통일
+1375 " 🔵 잔여 구식 클래스 위치 파악 - Charts.tsx·서브페이지 3개
+1376 2:09p 🔄 Charts·spotlight·calendar 페이지 구식 클래스 정리 완료
+1377 " 🔵 빌드 실패 - Google Fonts 네트워크 접근 불가 (빌드 환경 제한)
+1378 " 🔴 Google Fonts next/font import 제거로 빌드 오류 해결
+1379 2:10p 🔴 next/font/google 제거 후 빌드 성공 - 11개 정적 페이지 생성 완료
+1380 " ✅ 기본 테마를 다크에서 라이트로 변경
+1381 " 🔵 Turbopack PostCSS 프로세스 생성 불가 - 샌드박스 환경 포트 바인딩 제한
+1382 " 🔵 Turbopack 빌드 포트 바인딩 오류는 sandbox_permissions 권한 승격으로 해결
+1383 2:11p ✅ UI 개선 작업 최종 변경 파일 목록 확정
+1384 2:15p ✅ UI 개선 완료 후 배포 요청
+1385 " 🔵 배포 환경 파악 - GitHub Pages + GitHub Actions 자동 배포
+1386 " 🟣 UI 개선 커밋 후 GitHub에 push - GitHub Actions 자동 배포 트리거
+1388 " 🟣 lunaart-terminal UI 개선 작업 전체 배포 완료 요약
+1387 2:16p 🔵 샌드박스에서 gh CLI의 GitHub API 접근 불가 - 배포 상태 확인 제한
+1389 2:24p 🟣 GitHub Pages 배포 성공 확인 - 사이트 라이브
 
-Access 549k tokens of past work via get_observations([IDs]) or mem-search skill.
+Access 1335k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
